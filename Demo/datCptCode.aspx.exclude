@@ -1,0 +1,754 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="datCptCode.aspx.cs" Inherits="datCptCode" %>
+<%@ Register Src="~/EHR_UserControls/BaseIntelliSenseControl.ascx" TagName="BaseIntelliSenseControl" TagPrefix="uc1" %>
+<html>
+<head runat="server">
+    <title></title>
+    <link href="../../../Styles/stsCureMD_v10.css" rel="StyleSheet" />
+    <link rel="stylesheet" type="text/css" href="../../../Styles/ProviderNote.css" />
+    <script language="javascript" type="text/javascript">
+
+        function DeleteproCPTLists(proCptId) {
+            if (Deleteconfirm() == true) {
+                var resultActual = GetSynchronousJSONResponse('<%= Page.ResolveUrl("datCptCode.aspx/DeleteproCPTList")%>', '{"ID":"' + proCptId + '"}');
+                result = eval('(' + resultActual + ')');
+                if (result.d == 1)
+                    window.parent.ShowlstCptCode();
+                else if (typeof (result.d) == 'undefined') {
+                    return resultActual;
+                }
+                else if (result.d != "-1") {
+                    return result.d;
+                }
+            }
+        }
+
+        function GetSynchronousJSONResponse(url, functionparameters) {
+            var xmlhttp = null;
+            if (window.XMLHttpRequest)
+                xmlhttp = new XMLHttpRequest();
+            else if (window.ActiveXObject) {
+                if (new ActiveXObject("Microsoft.XMLHTTP"))
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                else
+                    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+            }
+            // to be ensure non-cached version of response
+            url = url + "?rnd=" + Math.random();
+
+            xmlhttp.open("POST", url, false); //false means synchronous
+            xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+            xmlhttp.send(functionparameters);
+            var responseText = xmlhttp.responseText;
+            return responseText;
+        }
+
+
+        //Start Validating Decimals
+        function ValidateAlpha(obj, maxDigit) {
+            //This function allows All alphabets and also ' and -
+            if (event.keyCode == 222) {
+                event.returnValue = false;
+            }
+
+            if (event.shiftKey) {
+                if (event.keyCode == 189 || event.keyCode == 222 || event.keyCode == 190 || (event.keyCode >= 48 && event.keyCode <= 57)) {
+                    event.returnValue = false;
+                    //'SHIFT - and SHIFT ' is not allowed
+                }
+            }
+            if (event.keyCode == 9 || event.keyCode == 13 || event.keyCode == 37 || event.keyCode == 32 || event.keyCode == 8 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 35 || event.keyCode == 36 || event.keyCode == 189 || event.keyCode == 222 || event.keyCode == 109) {
+                //'Acceptable In case of Left Arrow(37), Right Arrow(39), Home(36), End(35), Delete(46), BackSpace(8), SpaceBar(32), Single Quote(222), Dash(-)(189), Dash(in NUM Pad)(109)
+                return;
+            }
+
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)) {
+                //'Only Digits are Acceptable          	
+                var ary = obj.value.split(".");
+                if (obj.value != "" && obj.value.indexOf('.') >= 0) {
+                    if (ary[1].length >= 2) {
+                        obj.value = ary[0] + "." + ary[1].substring(0, 2);
+                        //alert('false');
+                        return false;
+
+                    }
+                }
+                if (obj.value != "" && obj.value.length >= maxDigit && obj.value.indexOf('.') == -1) {
+                    obj.value = obj.value.substr(0, maxDigit) + "." + obj.value.substr(maxDigit + 1, obj.value.length - 1);
+                }
+                return true;
+            }
+
+            if (event.keyCode >= 65 && event.keyCode <= 90) {
+                event.returnValue = false;
+                return;
+            } //'Acceptable
+            if (event.keyCode == 190 || event.keyCode == 110) {
+
+                if (obj.value.indexOf('.') >= 0) return false;
+                else if (obj.value.indexOf('.') == -1 && obj.value.length == 0) obj.value = pad(0, maxDigit) + obj.value;
+
+                return true;
+            }
+            else {
+                //'All other chars are not Acceptable
+                event.returnValue = false
+            }
+        }
+        //End Validating Decimals
+
+
+        function checkLength(id) {
+            var innerText;
+            innerText = new String();
+            innerText = id.innerText;
+            if (id.innerText.length > 250) {
+                alert("Maximum text length is 250.");
+                innerText = innerText.substr(0, 250);
+                id.value = innerText.substr(0, 250);
+            }
+        }
+
+        // Validation befare Save
+        function Validate() {
+            if (document.getElementById('<%=BaseIntelliSenseControlCode.ControlID%>' + '_txtField').value == "") {
+                alert("Required information is missing.");
+                document.getElementById('<%=BaseIntelliSenseControlCode.ControlID%>' + '_txtField').focus();
+                return false;
+            }
+            else if (document.getElementById('<%=BaseIntelliSenseControlCode.ControlID%>' + '_txtField').value == document.getElementById('<%=BaseIntelliSenseControlAssoCode.ControlID%>' + '_txtField').value) {
+                alert("CPT Code And AssoCode are Duplicate.");
+                document.getElementById('<%=BaseIntelliSenseControlAssoCode.ControlID%>' + '_txtField').focus();
+                return false;
+            }
+            // Validation before Save
+
+            //Start validating quantity
+            else if (document.getElementById('TxtQuantityMin').value != "" && document.getElementById('TxtQuantityMax').value != "") {
+                if (parseInt(document.getElementById('TxtQuantityMin').value) > parseInt(document.getElementById('TxtQuantityMax').value)) {
+                    alert("Minimum Quantity is greater than Maximum Quantity");
+                    return false;
+                }
+                document.getElementById('TxtQuantityMin').focus();
+            }
+            else if (document.getElementById('TxtQuantityMin').value != "" && document.getElementById('TxtQuantityMax').value == "") {
+                alert("Maximum Quantity Required.");
+                document.getElementById('TxtQuantityMax').focus();
+                return false;
+            }
+            else if (document.getElementById('TxtQuantityMax').value != "" && document.getElementById('TxtQuantityMin').value == "") {
+                alert("Minimum Quantity Required.");
+                document.getElementById('TxtQuantityMin').focus();
+                return false;
+            }
+            //Start validating quantity
+
+
+            //validating Size
+            if (document.getElementById('TxtSizeMin').value != "" && document.getElementById('TxtSizeMax').value != "") {
+                if (document.getElementById('TxtSizeMin').value > document.getElementById('TxtSizeMax').value) {
+                    alert("Minimum Size is greater than Maximum Size");
+                    return false;
+                }
+                document.getElementById('TxtSizeMin').focus();
+            }
+
+            if (document.getElementById('TxtSizeMin').value != "" && document.getElementById('TxtSizeMax').value == "") {
+                alert("Maximum Size Required.");
+                document.getElementById('TxtSizeMax').focus();
+                return false;
+            }
+            else if (document.getElementById('TxtSizeMax').value != "" && document.getElementById('TxtSizeMin').value == "") {
+                alert("Minimum Size Required.");
+                document.getElementById('TxtSizeMin').focus();
+                return false;
+            }
+            //validating Size
+            else
+                return true;
+        }
+
+        function CancelClicked() {
+
+            if (window.parent.ChildCancelClicked)
+                window.parent.ChildCancelClicked();
+        }
+        function createDeleteImg(id) {
+            var currentNode = document.getElementById(id);
+            var parentnode = currentNode.parentNode;
+            parentnode.removeChild(doc);
+        }
+
+        function ValidateTextBox(check) {
+            if (check == "Integer") {
+                if (window.event.shiftKey == false) {
+                    if (window.event.keyCode == 13 || window.event.keyCode == 37 || window.event.keyCode == 39 || window.event.keyCode == 46 || window.event.keyCode == 35 || window.event.keyCode == 36)
+                        window.event.returnValue = false;
+                    if (window.event.keyCode >= 65 && window.event.keyCode <= 90)
+                        window.event.returnValue = false;
+                    if ((window.event.keyCode >= 37 && window.event.keyCode <= 40) || window.event.keyCode == 9 || window.event.keyCode == 8 || (window.event.keyCode >= 48 && window.event.keyCode <= 57) || (window.event.keyCode >= 96 && window.event.keyCode <= 105))
+                        window.event.returnValue = true;
+                    else
+                        window.event.returnValue = false;
+                }
+                else {
+                    window.event.returnValue = false;
+                }
+            }
+            else if (check == "decimal") {
+                if (window.event.shiftKey == false) {
+                    if (window.event.keyCode == 13 || window.event.keyCode == 37 || window.event.keyCode == 39 || window.event.keyCode == 46 || window.event.keyCode == 35 || window.event.keyCode == 36)
+                        window.event.returnValue = false;
+                    if (window.event.keyCode >= 65 && window.event.keyCode <= 90)
+                        window.event.returnValue = false;
+                    if ((window.event.keyCode >= 37 && window.event.keyCode <= 40) || window.event.keyCode == 9 || window.event.keyCode == 110 || window.event.keyCode == 8 || (window.event.keyCode >= 48 && window.event.keyCode <= 57) || (window.event.keyCode >= 96 && window.event.keyCode <= 105))
+                        window.event.returnValue = true;
+                    else
+                        window.event.returnValue = false;
+                }
+                else {
+                    window.event.returnValue = false;
+                }
+            }
+            else if (check == "character") {
+                alert("character")
+            }
+        }
+
+        //Choices
+        function DeleteTypes(type, spanid, id) {
+            var confirmmessage, vspan, hdnfield;
+            confirmmessage = "";
+            vspan = "";
+            hdnfield = "";
+
+            switch (type) {
+                case "choices":
+                    vspan = "spAssociateChoice";
+                    hdnfield = "hdnchoices";
+                    break;
+                case "site":
+                    vspan = "spAssociateSite";
+                    hdnfield = "hdnsites";
+                    break;
+                case "method":
+                    vspan = "spAssociateMethod";
+                    hdnfield = "hdnmethods";
+                    break;
+            }
+
+            var currentNode = document.getElementById(spanid);
+            var parentnode = currentNode.parentNode;
+            parentnode.removeChild(currentNode);
+
+            var typearray = document.getElementById(hdnfield).value.split('|')
+
+            if (typearray.length - 1 > 0)
+                document.getElementById(vspan).style.display = "block";
+            else {
+                document.getElementById(vspan).style.display = "none";
+                return;
+            }
+
+            for (var i = 0; i < typearray.length - 1; i++) {
+                var typeattributes = typearray[i].split(',');
+                if (typeattributes[0] == id) {
+                    index = i;
+                    break;
+                }
+            }
+            document.all(hdnfield).value = "";
+
+            for (var i = 0; i < typearray.length - 1; i++) {
+                if (i == index)
+                    continue;
+                document.getElementById(hdnfield).value += typearray[i] + "|";
+            }
+            ShowHidespan();
+        }
+
+        function ShowHidespan() {
+            if (document.getElementById('hdnchoices').value == '')
+                document.getElementById('spAssociateChoice').style.display = "none";
+            if (document.getElementById('hdnmethods').value == '')
+                document.getElementById('spAssociateMethod').style.display = "none";
+            if (document.getElementById('hdnsites').value == '')
+                document.getElementById('spAssociateSite').style.display = "none";
+        }
+
+        function CreateTypes() {
+            if (document.getElementById("hdnchoices").value != "")
+                CreateChoices();
+            if (document.getElementById("hdnmethods").value != "")
+                CreateMethods();
+            if (document.getElementById("hdnsites").value != "")
+                CreateSites();
+        }
+
+        function CreateChoices() {
+            document.getElementById("spAssociateChoice").innerHTML = "";
+            var Typearray = document.getElementById("hdnchoices").value.split('|')
+
+            if (Typearray.length - 1 > 0)
+                document.getElementById("spAssociateChoice").style.display = "block";
+            else {
+                document.getElementById("spAssociateChoice").style.display = "none";
+                return;
+            }
+
+            for (var i = 0; i < Typearray.length - 1; i++) {
+                var typeattributes = Typearray[i].split(',');
+                var typehtml = "";
+                typehtml = "<span id= 'spChoice" + typeattributes[0] + "' style=' padding:20px 20px 10px 0px;'><span style='white-space: nowrap;'><img src='../../../Images/V10Icons/TreeView/delete.png' id=imgAssociateChoice'" + typeattributes[0] + "' style='cursor: pointer;' onclick='DeleteTypes(&quot;choices&quot;,&quot;spChoice" + typeattributes[0] + "&quot;," + typeattributes[0] + ")' />&nbsp;" + typeattributes[1] + "</span></span>"
+
+                var temphtml = document.getElementById("spAssociateChoice").innerHTML;
+                document.getElementById("spAssociateChoice").innerHTML = temphtml + typehtml;
+            }
+        }
+
+        function CreateMethods() {
+            document.getElementById("spAssociateMethod").innerHTML = "";
+            var Typearray = document.getElementById("hdnmethods").value.split('|')
+
+            if (Typearray.length - 1 > 0)
+                document.getElementById("spAssociateMethod").style.display = "block";
+            else {
+                document.getElementById("spAssociateMethod").style.display = "none";
+                return;
+            }
+
+            for (var i = 0; i < Typearray.length - 1; i++) {
+                var typeattributes = Typearray[i].split(',');
+
+                var typehtml = "";
+                typehtml = "<span id= 'spMethod" + typeattributes[0] + "' style=' padding:20px 20px 10px 0px;'><span style='white-space: nowrap;'><img src='../../../Images/V10Icons/TreeView/delete.png' id=imgAssociateMethod'" + typeattributes[0] + "' style='cursor: pointer;' onclick='DeleteTypes(&quot;method&quot;,&quot;spMethod" + typeattributes[0] + "&quot;," + typeattributes[0] + ")' />&nbsp;" + typeattributes[1] + "</span></span>"
+
+                var temphtml = document.getElementById("spAssociateMethod").innerHTML;
+                document.getElementById("spAssociateMethod").innerHTML = temphtml + typehtml;
+            }
+        }
+
+        function CreateSites() {
+            document.getElementById("spAssociateSite").innerHTML = "";
+            var Typearray = document.getElementById("hdnsites").value.split('|')
+
+            if (Typearray.length - 1 > 0)
+                document.getElementById("spAssociateSite").style.display = "block";
+            else {
+                document.getElementById("spAssociateSite").style.display = "none";
+                return;
+            }
+
+            for (var i = 0; i < Typearray.length - 1; i++) {
+                var typeattributes = Typearray[i].split(',');
+
+                var typehtml = "";
+                typehtml = "<span id= 'spSite" + typeattributes[0] + "' style=' padding:20px 20px 10px 0px;'><span style='white-space: nowrap;'><img src='../../../Images/V10Icons/TreeView/delete.png' id=imgAssociateChoice'" + typeattributes[0] + "' style='cursor: pointer;' onclick='DeleteTypes(&quot;site&quot;,&quot;spSite" + typeattributes[0] + "&quot;," + typeattributes[0] + ")' />&nbsp;" + typeattributes[1] + "</span></span>"
+
+                var temphtml = document.getElementById("spAssociateSite").innerHTML;
+                document.getElementById("spAssociateSite").innerHTML = temphtml + typehtml;
+            }
+        }
+
+        //Intellisense functions Start
+        function selected_ItemCode(sender, e) {
+            var ArrayVal = (e._value).split("|");
+            var jcontrolid = '<%=BaseIntelliSenseControlCode.ControlID %>' + '_txtField';
+            var jAssocode = document.getElementById('<%=BaseIntelliSenseControlAssoCode.ControlID %>' + '_txtField').value;
+
+            if (ArrayVal[1] == jAssocode) {
+                alert("CPT Code And AssoCode are Duplicate.");
+                document.getElementById(jcontrolid).innerText = "";
+                document.getElementById(jcontrolid).focus = "true";
+                return false;
+            }
+            else {
+                document.getElementById(jcontrolid).innerText = ArrayVal[1];
+            }
+        }
+
+        function selected_ItemAssoCode(sender, e) {
+            var ArrayVal = (e._value).split("|");
+            var jcontrolid = '<%=BaseIntelliSenseControlAssoCode.ControlID %>' + '_txtField';
+            var jcode = document.getElementById('<%=BaseIntelliSenseControlCode.ControlID %>' + '_txtField').value;
+
+            if (ArrayVal[1] == jcode) {
+                alert("CPT Code And AssoCode are Duplicate.");
+                document.getElementById(jcontrolid).innerText = "";
+                document.getElementById(jcontrolid).focus = "true";
+                return false;
+            }
+            else {
+                document.getElementById(jcontrolid).innerText = ArrayVal[1];
+            }
+        }
+
+        function ClientPopulatedCode(sender, e) {
+            var listObject = $find('<%=BaseIntelliSenseControlCode.ControlID %>');
+
+            listObject._popupBehavior._element.style.zIndex = 50000;
+            listObject._popupBehavior._element.style.width = "400px";
+
+            var complaints = sender.get_completionList().childNodes;
+            for (var i = 0; i < complaints.length; i++) {
+                var complaintsVals = (complaints[i]._value).split("|");
+                complaints[i].innerHTML = "<table border='0' width='98%' class='Label' cellspacing='0' cellpadding='0px' _value=" + complaints[i]._value + " ><tr><td valign='top'  style=' width:15%' class='Label' _value=" + complaints[i]._value + ">" + complaintsVals[1] + "</td><td valign='top' _value=" + complaints[i]._value + " style=' width:83%' class='Label'>" + complaintsVals[2] + "</td></tr></table>";
+
+                document.getElementById("hdnintellieid").value += complaintsVals[1] + ",";
+            }
+        }
+
+        function ClientPopulatedAssoCode(sender, e) {
+            var listObject = $find('<%=BaseIntelliSenseControlAssoCode.ControlID %>');
+
+            listObject._popupBehavior._element.style.zIndex = 50000;
+            listObject._popupBehavior._element.style.width = "400px";
+
+
+            var complaints = sender.get_completionList().childNodes;
+            for (var i = 0; i < complaints.length; i++) {
+
+                var complaintsVals = (complaints[i]._value).split("|");
+                complaints[i].innerHTML = "<table border='0' width='98%' class='Label' cellspacing='0' cellpadding='0px' _value=" + complaints[i]._value + " ><tr><td valign='top' style=' width:15%' class='Label' _value=" + complaints[i]._value + ">" + complaintsVals[1] + "</td><td valign='top' _value=" + complaints[i]._value + " style=' width:83%' class='Label'>" + complaintsVals[2] + "</td></tr></table>";
+            }
+        }
+
+        function selected_ItemChoices(sender, e) {
+            var jChoicesArray = (e._value).split('|');
+            var jhdnchoices = document.getElementById("hdnchoices").value;
+            var Typearray = document.getElementById("hdnchoices").value.split('|');
+
+            //Check For Duplicate Choices
+            for (var i = 0; i < Typearray.length - 1; i++) {
+                var typeattributes = Typearray[i].split(',');
+                if (typeattributes[0] == jChoicesArray[0]) {
+                    alert("Choice is already associated.");
+                    document.getElementById('<%=BaseIntelliSenseControlChoices.ControlID %>' + '_txtField').value = "";
+                    return false;
+                }
+            }
+
+            document.getElementById("hdnchoices").value += jChoicesArray[0] + "," + jChoicesArray[1] + "|";
+            document.getElementById('<%=BaseIntelliSenseControlChoices.ControlID %>' + '_txtField').value = "";
+
+            if (jhdnchoices != "")
+                document.getElementById("hdnchoices").value += "";
+            else
+                document.getElementById("hdnchoices").value += "";
+
+            CreateChoices();
+        }
+
+        function selected_ItemMethod(sender, e) {
+            var jcontrolid = '<%=BaseIntelliSenseControlMethod.ControlID %>' + '_txtField';
+            var ArrayVal = (e._value).split("|");
+            document.getElementById(jcontrolid).innerText = ArrayVal[0];
+
+            var jMethodsArray = (e._value).split('|');
+            var jhdnmethods = document.getElementById("hdnmethods").value;
+            var Typearray = document.getElementById("hdnmethods").value.split('|');
+
+            //Check For Duplicate Choices
+            for (var i = 0; i < Typearray.length - 1; i++) {
+                var typeattributes = Typearray[i].split(',');
+                if (typeattributes[0] == jMethodsArray[0]) {
+                    alert("Method is already associated.");
+                    document.getElementById('<%=BaseIntelliSenseControlMethod.ControlID %>' + '_txtField').value = "";
+                    return false;
+                }
+            }
+
+            document.getElementById("hdnmethods").value += jMethodsArray[0] + "," + jMethodsArray[1] + "|";
+            document.getElementById('<%=BaseIntelliSenseControlMethod.ControlID %>' + '_txtField').value = "";
+
+            if (jhdnmethods != "")
+                document.getElementById("hdnmethods").value += "";
+            else
+                document.getElementById("hdnmethods").value += "";
+
+            CreateMethods();
+        }
+
+        function selected_ItemSite(sender, e) {
+
+            var jcontrolid = '<%=BaseIntelliSenseControlSite.ControlID %>' + '_txtField';
+            var ArrayVal = (e._value).split("|");
+            document.getElementById(jcontrolid).innerText = ArrayVal[0];
+
+            var jSitesArray = (e._value).split('|');
+            var jhdnsite = document.getElementById("hdnsites").value;
+            var Typearray = document.getElementById("hdnsites").value.split('|');
+
+            //Check For Duplicate Choices
+            for (var i = 0; i < Typearray.length - 1; i++) {
+                var typeattributes = Typearray[i].split(',');
+                if (typeattributes[0] == jSitesArray[0]) {
+                    alert("Site is already associated.");
+                    document.getElementById('<%=BaseIntelliSenseControlSite.ControlID %>' + '_txtField').value = "";
+                    return false;
+                }
+            }
+
+            document.getElementById("hdnsites").value += jSitesArray[0] + "," + jSitesArray[1] + "|";
+            document.getElementById('<%=BaseIntelliSenseControlSite.ControlID %>' + '_txtField').value = "";
+
+            if (jhdnsite != "")
+                document.getElementById("hdnsites").value += "";
+            else
+                document.getElementById("hdnsites").value += "";
+
+            CreateSites();
+        }
+
+
+        function ClientPopulatedChoices(sender, e) {
+            var listObject = $find('<%=BaseIntelliSenseControlChoices.ControlID %>');
+            listObject._popupBehavior._element.style.zIndex = 50000;
+
+        }
+
+        function ClientPopulatedMethod(sender, e) {
+
+            var listObject = $find('<%=BaseIntelliSenseControlMethod.ControlID %>');
+            listObject._popupBehavior._element.style.zIndex = 50000;
+
+        }
+
+        function ClientPopulatedSite(sender, e) {
+            var listObject = $find('<%=BaseIntelliSenseControlSite.ControlID %>');
+            listObject._popupBehavior._element.style.zIndex = 50000;
+
+        }
+        //Intellisense function End
+
+        function CptCodeNotExist() {
+            alert("CPT Code doesnot Exist.");
+            return false;
+        }
+
+        function AssoCptCodeNotExist() {
+            alert("AssoCPTCode doesnot Exist.");
+            return false;
+        }
+
+        function CPTCodeAlreadyExists() {
+            alert("CPT code already exists.");
+            return false;
+        }
+    </script>
+    <script type="text/vbscript" language="vbscript">
+	function Deleteconfirm()
+		Dim rtn
+		rtn = MsgBox("Are you sure you want to delete?" , vbYesNo ,"Delete")
+		If rtn = 6 Then
+			Deleteconfirm = true
+		Else
+			Deleteconfirm = false
+		End If
+	end function 
+    </script>
+</head>
+<body onload="CreateTypes()">
+    <form id="form1" runat="server">
+    <asp:ScriptManager ID="scriptmanager1" runat="server" ></asp:ScriptManager>
+    <span style="text-align: right; width: 100%; top: 13; left: 8px; position: relative">
+        <asp:ImageButton ToolTip="Close" ImageUrl="~/Images/V10Icons/TreeView/window_close.png" ID="imgClose" runat="server" OnClientClick="CancelClicked();return false;" />
+    </span>
+    <div style="width: 100%; border: 4 Solid LightGray; padding: 10px 10px 10px 10px">
+        <div runat="server" id="dvhead" style="height: 25px; border-bottom: 2 Dotted LightGray; font-weight: bold; font-family: Tahoma">
+            CPT Code</div>
+        <table border="0" width="100%" cellspacing="10px" cellpadding="0">
+            <tr>
+                <td valign="Top" colspan="5" class="Label">
+                    <table border="0" cellpadding="0" cellspacing="0px" width="100%">
+                        <tr>
+                            <td class="Label" style="width: 105px;">
+                                <span id="abc" runat="server" title="abc" >Code<span style=" font-weight:bold;"> *</span></span> 
+                            </td>
+                            <td style="width: 112px;">
+                                <span style="width: 112px;">
+                                    <uc1:BaseIntelliSenseControl ControlID="BaseIntelliSenseControlCode" ID="BaseIntelliSenseControlCode"
+                                        EnableCaching="true" runat="server" ServiceMethod="GETCPTIntellisense" ServicePath="~/EHRIntelliSense.asmx"
+                                        Width="145px" OnClientItemSelected="selected_ItemCode" OnClientPopulated="ClientPopulatedCode"
+                                        MaxTextLength="30" />
+                                </span>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td class="Label" style="width: 102px;">Associated Code</td>
+                            <td>
+                                <span style="width: 112px;">
+                                    <uc1:BaseIntelliSenseControl ControlID="BaseIntelliSenseControlAssoCode" ID="BaseIntelliSenseControlAssoCode"
+                                        EnableCaching="true" runat="server" ServiceMethod="GETCPTIntellisense" ServicePath="~/EHRIntelliSense.asmx"
+                                        Width="145px" OnClientItemSelected="selected_ItemAssoCode" OnClientPopulated="ClientPopulatedAssoCode"
+                                        MaxTextLength="30" />
+                                </span>
+                            </td>
+                            <td class="Label">
+                            <div id="divinactive" style=" display:none;" runat="server"> 
+                                <span id="CheckboxBorder" style="position: relative; top: -2px;">
+                                    <input class="checkbox" type="checkbox" name="chkInactive" runat="server" id="chkInactive" />
+                                 </span>&nbsp;
+                                <label class="Label" for="chkInactive">Inactive</label>
+                            </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label" style="width: 300px;">
+                    Choices
+                </td>
+                <td valign="top" colspan="3">
+                    <span style="width: 400px;">
+                        <uc1:BaseIntelliSenseControl ControlID="BaseIntelliSenseControlChoices" ID="BaseIntelliSenseControlChoices"
+                            EnableCaching="true" runat="server" ServiceMethod="GetChoicesIntellisense" ServicePath="~/EHRIntelliSense.asmx"
+                            Width="400px" OnClientItemSelected="selected_ItemChoices" OnClientPopulated="ClientPopulatedChoices"
+                            MaxTextLength="30" />
+                    </span>&nbsp;&nbsp;
+                    <span class="Label" style="color: Gray; font-size: smaller;">- Associate Choice -</span> 
+                    <span style="padding: 10px 0px 0px 0px; width: 400px; display: none;" id="spAssociateChoice" class="Label"></span>
+                </td>
+                <td valign="Top"></td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label">Method</td>
+                <td valign="Top" colspan="3">
+                    <span style="width: 400px;">
+                        <uc1:BaseIntelliSenseControl ControlID="BaseIntelliSenseControlMethod" ID="BaseIntelliSenseControlMethod"
+                            EnableCaching="true" runat="server" ServiceMethod="GetMethodIntellisense" ServicePath="~/EHRIntelliSense.asmx"
+                            Width="400px" OnClientItemSelected="selected_ItemMethod" OnClientPopulated="ClientPopulatedMethod"
+                            MaxTextLength="30" />
+                    </span>&nbsp;&nbsp;
+                    <span class="Label" style="color: Gray; font-size: smaller;">- Associate Method -</span>
+                    <br />
+                    <span style="padding: 10px 0px 0px 0px; width: 400px; display: none;" id="spAssociateMethod" class="Label"></span>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label">Site</td>
+                <td valign="Top" colspan="3">
+                    <span style="width: 400px;">
+                        <uc1:BaseIntelliSenseControl ControlID="BaseIntelliSenseControlSite" ID="BaseIntelliSenseControlSite"
+                            EnableCaching="true" runat="server" ServiceMethod="GetBillingSiteIntellisense"
+                            ServicePath="~/EHRIntelliSense.asmx" Width="400px" OnClientItemSelected="selected_ItemSite"
+                            OnClientPopulated="ClientPopulatedSite" MaxTextLength="30" />
+                    </span>&nbsp;&nbsp;<span class="Label" style="color: Gray; font-size: smaller;">- Associate Site -</span>
+                    <br />
+                    <span style="padding: 10px 0px 10px 0px; width: 400px; display: none;" id="spAssociateSite" class="Label"></span>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label">Size</td>
+                <td valign="Top">
+                    <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td valign="Top" class="Label" style="width: 50px;">Min</td>
+                            <td><asp:TextBox ID="TxtSizeMin" runat="server" Width="60px" MaxLength="5" onkeydown="return ValidateAlpha(this, 3)"></asp:TextBox></td>
+                            <td valign="Top" class="Label" style="width: 50px;">Max</td>
+                            <td><asp:TextBox ID="TxtSizeMax" runat="server" Width="60px" MaxLength="5" onkeydown="return ValidateAlpha(this, 3)"></asp:TextBox></td>
+                            <td valign="Top" class="Label" style="width: 50px;">Units</td>
+                            <td>
+                                <span id="spsizeunit" class="selectBorder_New" style="width: 80px; text-align: right">
+                                    <asp:DropDownList ID="ddlsizeunit" runat="server" Width="84px" AppendDataBoundItems="false">
+                                        <asp:ListItem Text="CM" Value="cm"></asp:ListItem>
+                                        <asp:ListItem Text="SQ CM" Value="sq cm"></asp:ListItem>
+                                        <asp:ListItem Text="CC" Value="cc"></asp:ListItem>
+                                    </asp:DropDownList>
+                                </span>
+                            </td>
+                            <td style="width: 80px;"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label">Quantity</td>
+                <td>
+                    <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td valign="Top" class="Label" style="width: 50px;">Min</td>
+                            <td><asp:TextBox ID="TxtQuantityMin" runat="server" Width="60px" MaxLength="4" onkeydown="ValidateTextBox('Integer')"></asp:TextBox></td>
+                            <td valign="Top" class="Label" style="width: 50px;">Max</td>
+                            <td style="width: 50px;">
+                                <asp:TextBox ID="TxtQuantityMax" runat="server" Width="60px" MaxLength="4" onkeydown="ValidateTextBox('Integer')"></asp:TextBox>
+                            </td>
+                            <td style="width: 60px;"></td>
+                            <td style="width: 205px;"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="Label">Consent</td>
+                <td colspan="2">
+                    <span id="spconsent" class="selectBorder_New" style="width: 400px; text-align: right">
+                        <asp:DropDownList ID="ddlconsent" runat="server" Width="404px" AppendDataBoundItems="true"
+                            DataTextField="LetterName" DataValueField="LetterID">
+                            <asp:ListItem Text="--Select--" Value="Select" Selected="True"></asp:ListItem>
+                        </asp:DropDownList>
+                    </span>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label">Charge</td>
+                <td valign="Top" class="Label">
+                    <input class="radio" type="radio" name="radrows" id="radFlat" runat="server" style="position: relative;
+                        left: -5px;" />&nbsp;<label for="radFlat">Flat</label>
+                    &nbsp;&nbsp;
+                    <input class="radio" type="radio" name="radrows" id="radPerUnit" runat="server" style="position: relative;
+                        left: -5px;" />&nbsp;<label for="radPerUnit">Per Unit</label>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td valign="Top" class="Label">Description</td>
+                <td colspan="4">
+                    <asp:TextBox TextMode="MultiLine" runat="server" ID="TxtDescription" onkeyup="checkLength(this)"
+                        MaxLength="250" Width="560px" Height="50px"></asp:TextBox>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td valign="Top" class="Label">
+                    <span id="CheckboxBorder" style="position: relative; top: -2px;">
+                        <input class="checkbox" type="checkbox" name="chkPrintByRows" runat="server" id="chkPrintByRows" /></span>
+                    &nbsp;
+                    <label class="Label" for="chkPrintByRows">
+                        Print By Rows</label>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <div style="float: right; padding-top: 10px">
+            <asp:ImageButton ID="btnDelete" Width="80px" Height="20px" runat="server" ImageUrl="~/Images/V10Icons/TreeView/bt_delete.png" />
+            <asp:ImageButton ID="btnSave" Width="80px" Height="20px" OnClick="btnSave_Click"
+                runat="server" OnClientClick="return Validate();" ImageUrl="~/Images/V10Icons/TreeView/bt_save.png" />
+        </div>
+    </div>
+    <asp:HiddenField ID="pracID" runat="server" />
+    <asp:HiddenField ID="ccID" runat="server" Value="0" />
+    <asp:HiddenField ID="isSaved" runat="server" Value="0" />
+    <asp:HiddenField ID="hdnAssociative" runat="server" Value="" />
+    <asp:HiddenField ID="hdnproCPTId" runat="server" Value="" />
+    <asp:HiddenField ID="hdnchoices" runat="server" Value="" />
+    <asp:HiddenField ID="hdnmethods" runat="server" Value="" />
+    <asp:HiddenField ID="hdnsites" runat="server" Value="" />
+    <asp:HiddenField ID="hdnintellieid" runat="server" Value="" />
+    </form>
+</body>
+</html>

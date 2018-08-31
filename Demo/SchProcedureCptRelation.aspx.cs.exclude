@@ -1,0 +1,498 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.Services;
+using EHR_BusinessLogic;
+using System.Data;
+using EHR_DataTransferObjects;
+
+public partial class SchProcedureCptRelation : clsBasePage
+{
+    protected clsBLComplaints objBL0;
+    protected List<clsDTOComplaints> lstDTO;
+    protected string PageFrom = "";
+    protected string tabPages;
+    protected clsBLDermSimpleLists objBL1;
+    protected List<clsDTOProlist> objDTO1;
+    protected clsBLDermSimpleLists objBL;
+
+
+    protected override void OnInit(EventArgs e)
+    {
+        string strPage = "";
+        strPage = Page.Request.ApplicationPath + "/settings/EHR/Dermatology/SchProcedureCptRelation.aspx";
+
+        ReLoginPagePath = strPage;
+        base.OnInit(e);
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        //System.Diagnostics.Debugger.Break();
+        createTabs();
+        objBL0 = new clsBLComplaints();
+        objBL1 = new clsBLDermSimpleLists();
+
+        if (Request.QueryString["PageFrom"] != null)
+            PageFrom = Request.QueryString["PageFrom"].ToString();
+
+        if (!Page.IsPostBack)
+        {
+            this.hdnPageNo.Value = "1";
+            this.hdnPageSize.Value = "15";
+            BaseIntelliSenseControl1.ContextKey = "All";
+        }
+        else
+        {
+            BaseIntelliSenseControl1.ContextKey = DrlstProtype.SelectedValue;
+        }
+    }
+
+    public string createTabs()
+    {
+        string[,] TabsArray = new string[1, 3];
+        TabsArray[0, 0] = "";
+        TabsArray[0, 1] = "Procedure";
+        TabsArray[0, 2] = "";
+        tabPages = GenerateTabs(TabsArray, 0, false, true, false);
+        return tabPages;
+    }
+
+    private void BindGrid()
+    {
+        int StartPage = Convert.ToInt32(this.hdnPageNo.Value);
+        int PageSize = Convert.ToInt32(this.hdnPageSize.Value);
+
+        string ID = hdnPostBackID.Value;
+        if (ID == "")
+        {
+            objDTO1 = objBL1.GetProcedures((Convert.ToInt32(HttpContext.Current.Session[Constants.PracticeId])), DrlstProtype.SelectedItem.Value.ToString(), BaseIntelliSenseControl1.Val, StartPage, PageSize);
+            divpaging.Style["display"] = "inline";
+        }
+        else
+        {
+            objDTO1 = objBL1.GetProcedureById((Convert.ToInt32(HttpContext.Current.Session[Constants.PracticeId])), Convert.ToInt32(hdnPostBackID.Value), StartPage, PageSize);
+            divpaging.Style["display"] = "none";
+        }
+
+        string strInitialise = "parentDiv.style.display = 'none';DivGrid.style.display = 'inline';" + "document.getElementById('DivGrid').innerHTML = ''; Initialise('DivGrid', 'rootEle', '../../../Images/V10Icons/TreeView/rowbackcolor.png', '../../../Images/V10Icons/TreeView/plus.png', '../../../Images/V10Icons/TreeView/minus.png', '../../../Images/V10Icons/TreeView/transparent.gif', '../../../Images/V10Icons/TreeView/AddQA.png','../../../Images/V10Icons/TreeView/edit.gif','../../../Images/V10Icons/TreeView/preview.png');";
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "InitialiseTree", strInitialise, true);
+
+        int i = 0;
+
+        foreach (clsDTOProlist objDTOs in objDTO1)
+        {
+            string strDesc = objDTOs.ProType.Trim();
+            if (strDesc.Length > 70)
+                strDesc = strDesc.Substring(0, 70);
+
+            string strDiscription = objDTOs.ProType.Trim() != "" ? " <I><font color=\"gray\">&nbsp;&nbsp;-&nbsp;&nbsp;" + strDesc + "</font></I> " : "";
+            strDiscription = strDiscription.Replace("\n", "").Replace("\r", "").Replace("'", "&#39;");
+            string script = "";
+
+            if (objDTOs.Deleted == 0)
+                script = "AddNode(rootCell, " + "'CC_" + objDTOs.ProId + "','" + objDTOs.ProName.Replace("'", "&#39;") + strDiscription + "','Label', false,true,true, false);";
+            else
+                script = "AddNodeInactive(rootCell, " + "'CC_" + objDTOs.ProId + "','" + objDTOs.ProName.Replace("'", "&#39;") + strDiscription + "','Label', false,true,false, false);";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "script" + i.ToString(), script, true);
+            i++;
+        }
+    }
+
+    protected void Page_PreRenderComplete(object sender, EventArgs e)
+    {
+        Control_ucPager UcObj = (Control_ucPager)this.ucPager1;
+        divpaging.Style["display"] = "none";
+        if (Page.IsPostBack)
+        {
+            BindGrid();
+            if (objDTO1.Count == 0)
+            {
+                pnlShowRecord.Visible = true;
+                divpaging.Style["display"] = "none";
+            }
+            else
+            {
+                hdnTotalRecords.Value = objDTO1[0].TotalRec.ToString();
+                int totalPages = objDTO1[0].TotalRec / 15;
+                if ((objDTO1[0].TotalRec % 15) == 0)
+                    hdnTotalPages.Value = totalPages.ToString();
+                else
+                    hdnTotalPages.Value = (totalPages + 1).ToString();
+
+                pnlShowRecord.Visible = false;
+                divpaging.Style["display"] = "inline";
+                UcObj.UpdatePager(objDTO1.Count);
+            }
+        }
+    }
+
+    protected void imgSearch_Click(object sender, ImageClickEventArgs e)
+    {
+        this.hdnPostBackID.Value = "";
+        this.hdnPageNo.Value = "1";
+        this.hdnPageSize.Value = "15";
+    }
+
+    # region Web Methods
+    [WebMethod(EnableSession = true)]
+    public static string GetToolTipData(string ID)
+    {
+        string strPreffix = ID.Substring(0, 3);
+        ID = ID.Substring(3);
+        int ipracid = int.Parse(HttpContext.Current.Session[Constants.PracticeId].ToString());
+
+        if (strPreffix == "Q1_")
+            return getQuestion1Info(ipracid, ID);
+        else if (strPreffix == "A1_")
+            return getAnswer1Info(ipracid, ID);
+        else if (strPreffix == "Q2_")
+            return getQuestion2Info(ipracid, ID);
+        else if (strPreffix == "A2_")
+            return getAnswer2Info(ipracid, ID);
+        else if (strPreffix == "Q3_")
+            return getQuestion3Info(ipracid, ID);
+        else if (strPreffix == "A3_")
+            return getAnswer3Info(ipracid, ID);
+        else
+            return "-1";
+    }
+
+    [WebMethod(EnableSession = true)]
+    public static string SwapData(string ID, string dragID, string dropID)
+    {
+        string strPreffix = ID.Substring(0, 3);
+        string[] DragIDs = dragID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        string[] DropIDs = dropID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+
+        int ipracid = int.Parse(HttpContext.Current.Session[Constants.PracticeId].ToString());
+
+        clsBLComplaints objBL0 = new clsBLComplaints();
+        objBL0.ArrangeCCQ1SortOrder(ipracid, "symptom", int.Parse(ID.Substring(3)), int.Parse(DragIDs[2]), int.Parse(DropIDs[2]));
+
+        return GetData(ID);
+    }
+
+    [WebMethod(EnableSession = true)]
+    public static string GetData(string ID)
+    {
+        string strPreffix = ID.Substring(0, 3);
+        ID = ID.Substring(3);
+        int ipracid = int.Parse(HttpContext.Current.Session[Constants.PracticeId].ToString());
+
+        if (strPreffix == "CC_")
+            return getCCQuestion1(ipracid, ID);
+        if (strPreffix == "Q1_")
+            return getAnswer1(ipracid, ID);
+        else if (strPreffix == "A1_")
+            return getQuestion2(ipracid, ID);
+        else if (strPreffix == "Q2_")
+            return getAnswer2(ipracid, ID);
+        else if (strPreffix == "A2_")
+            return getQuestion3(ipracid, ID);
+        else if (strPreffix == "Q3_")
+            return getAnswer3(ipracid, ID);
+        else
+            return "-1";
+    }
+
+    [WebMethod(EnableSession = true)]
+    public static string DeleteData(string ID)
+    {
+        string strPreffix = ID.Substring(0, 3);
+        ID = ID.Substring(3);
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        int ipracid = int.Parse(HttpContext.Current.Session[Constants.PracticeId].ToString());
+        return DeleteCCQuestion1(ipracid, int.Parse(IDs[0]), int.Parse(IDs[1]));
+    }
+
+    [WebMethod(EnableSession = true)]
+    public static string InsertDeleteQAPRO(string ID, int insert)
+    {
+        string strPreffix = ID.Substring(0, 3);
+        ID = ID.Substring(3);
+        int ipracid = int.Parse(HttpContext.Current.Session[Constants.PracticeId].ToString());
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        string[] strArgumentList = new string[] { "0", "0", "0", "0", "0", "0", "0" };
+
+        for (int i = 0; i < IDs.Length; i++)
+            strArgumentList[i] = IDs[i];
+
+        bool doInsert = insert == 1 ? true : false;
+
+        clsBLDermSimpleLists objBL1 = new clsBLDermSimpleLists();
+        int rtn = objBL1.InsertDeleteQAPRO(doInsert, ipracid, Convert.ToInt32(strArgumentList[0]), Convert.ToInt32(strArgumentList[1]), Convert.ToInt32(strArgumentList[2]), Convert.ToInt32(strArgumentList[3]), Convert.ToInt32(strArgumentList[4]), Convert.ToInt32(strArgumentList[5]), Convert.ToInt32(strArgumentList[6]));
+        return rtn.ToString();
+
+    }
+    # endregion
+
+    # region Helping static Methods
+    public static string getCCQuestion1(int pracid, string ID)
+    {
+        clsBLDermSimpleLists objBL = new clsBLDermSimpleLists();
+
+        List<EHR_DataTransferObjects.Complaints.clsDTOCCQuestion1> lstDTO = objBL.GetCCQuestion1PRO(pracid, int.Parse(ID));
+        string rtn = "-1";
+        if (lstDTO.Count > 0)
+        {
+            rtn = "";
+            lstDTO.Sort(delegate(EHR_DataTransferObjects.Complaints.clsDTOCCQuestion1 p1, EHR_DataTransferObjects.Complaints.clsDTOCCQuestion1 p2)
+            {
+                int result = p1.sortOrder.CompareTo(p2.sortOrder);
+                if (result == 0)
+                    result = p1.medicalTerm.CompareTo(p2.medicalTerm);
+                return result;
+            });
+            foreach (EHR_DataTransferObjects.Complaints.clsDTOCCQuestion1 obj in lstDTO)
+            {
+                if (rtn == "")
+                    rtn = ID + "_" + obj.question1Id.ToString() + "|" + (obj.A1Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm;
+                else
+                    rtn = rtn + "::" + ID + "_" + obj.question1Id.ToString() + "|" + (obj.A1Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm;
+            }
+        }
+        return rtn;
+    }
+
+    public static string DeleteCCQuestion1(int pracid, int complaintID, int QuetionID)
+    {
+        clsBLDermSimpleLists objBL = new clsBLDermSimpleLists();
+        int rtn = objBL.DeleteCCQuestion1PRO(pracid, complaintID, QuetionID);
+        return rtn.ToString();
+    }
+        
+    public static string getQuestion1Info(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL0 = new clsBLQuestion();
+        clsDTOQuestion1 obj = objBL0.getQuestion1Info(pracid, int.Parse(IDs[1]));
+
+        string rtn = obj.q1Id.ToString() + "|" + obj.medicalTerm + "|" + obj.Abbreviation + "|" + obj.prefix + "|" + obj.suffix + "|" + obj.sortOrder + "|" + obj.gender + "|" + obj.points.ToString() + "|" + obj.ansSelection + "|" + obj.displayQ.ToString() + "|" + obj.fieldType.Replace("$", ", ") + "|" + obj.CustomControlText;
+
+        return rtn;
+    }
+    public static string getAnswer1Info(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL0 = new clsBLQuestion();
+        clsDTOAnswer1 obj = objBL0.getAnswer1Info(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]));
+
+        string rtn = obj.q1Id.ToString() + "|" + obj.medicalTerm + "|" + obj.Abbreviation + "|" + obj.sortOrder + "|" + obj.gender + "|" + obj.points.ToString() + "|" + obj.notesSize.Trim().ToLower() + "|" + obj.noteString.ToString() + "|" + obj.fieldType.Replace("$", ", ");
+
+        return rtn;
+    }
+    public static string getQuestion2Info(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL0 = new clsBLQuestion();
+        clsDTOQuestion2 obj = objBL0.getQuestion2Info(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]));
+
+        string rtn = obj.q1Id.ToString() + "|" + obj.medicalTerm + "|" + obj.Abbreviation + "|" + obj.prefix + "|" + obj.suffix + "|" + obj.sortOrder + "|" + obj.gender + "|" + obj.points.ToString() + "|" + obj.ansSelection + "|" + obj.displayQ.ToString() + "|" + obj.fieldType.Replace("$", ", ") + "|" + obj.CustomControlText;
+
+        return rtn;
+    }
+    public static string getAnswer2Info(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL0 = new clsBLQuestion();
+        clsDTOAnswer2 obj = objBL0.getAnswer2Info(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]));
+
+        string rtn = obj.q1Id.ToString() + "|" + obj.medicalTerm + "|" + obj.Abbreviation + "|" + obj.sortOrder + "|" + obj.gender + "|" + obj.points.ToString() + "|" + obj.notesSize.Trim().ToLower() + "|" + obj.noteString.ToString() + "|" + obj.fieldType.Replace("$", ", ");
+
+        return rtn;
+    }
+    public static string getQuestion3Info(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL0 = new clsBLQuestion();
+        clsDTOQuestion3 obj = objBL0.getQuestion3Info(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]), int.Parse(IDs[5]));
+
+        string rtn = obj.q1Id.ToString() + "|" + obj.medicalTerm + "|" + obj.Abbreviation + "|" + obj.prefix + "|" + obj.suffix + "|" + obj.sortOrder + "|" + obj.gender + "|" + obj.points.ToString() + "|" + obj.ansSelection + "|" + obj.displayQ.ToString() + "|" + obj.fieldType.Replace("$", ", ") + "|" + obj.CustomControlText;
+
+        return rtn;
+    }
+    public static string getAnswer3Info(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL0 = new clsBLQuestion();
+        clsDTOAnswer3 obj = objBL0.getAnswer3Info(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]), int.Parse(IDs[5]), int.Parse(IDs[6]));
+
+        string rtn = obj.q1Id.ToString() + "|" + obj.medicalTerm + "|" + obj.Abbreviation + "|" + obj.sortOrder + "|" + obj.gender + "|" + obj.points.ToString() + "|" + obj.notesSize.Trim().ToLower() + "|" + obj.noteString.ToString() + "|" + obj.fieldType.Replace("$", ", ");
+
+        return rtn;
+    }
+
+    public static string getAnswer1(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+
+        clsBLQuestion objBL = new clsBLQuestion();
+        clsBLDermSimpleLists objCCBL = new clsBLDermSimpleLists();
+        List<clsDTOAnswer1> lstDTO = objBL.GetAnswer1(pracid, int.Parse(IDs[1]));
+        DataTable objCCData = objCCBL.GetCCAnswer1PRO(pracid, int.Parse(IDs[0]), int.Parse(IDs[1]));
+
+        string rtn = "-1";
+        if (lstDTO.Count > 0)
+        {
+            rtn = "";
+            lstDTO.Sort(delegate(clsDTOAnswer1 p1, clsDTOAnswer1 p2)
+            {
+                int result = p1.sortOrder.CompareTo(p2.sortOrder);
+                if (result == 0)
+                    result = p1.medicalTerm.CompareTo(p2.medicalTerm);
+                return result;
+            });
+            foreach (clsDTOAnswer1 obj in lstDTO)
+            {
+                DataRow[] drs = objCCData.Select("question1Answerid=" + obj.a1Id);
+                String isChecked = drs.Length > 0 ? "1" : "0";
+
+                if (rtn == "")
+                    rtn = ID + "_" + obj.a1Id.ToString() + "|" + (obj.Q2Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+                else
+                    rtn = rtn + "::" + ID + "_" + obj.a1Id.ToString() + "|" + (obj.Q2Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+            }
+        }
+
+        return rtn;
+    }
+    public static string getQuestion2(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL = new clsBLQuestion();
+        clsBLDermSimpleLists objCCBL = new clsBLDermSimpleLists();
+        List<clsDTOQuestion2> lstDTO = objBL.GetQuestion2(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]));
+        DataTable objCCData = objCCBL.GetCCQuestion2PRO(pracid, int.Parse(IDs[0]), int.Parse(IDs[1]), int.Parse(IDs[2]));
+
+        string rtn = "-1";
+        if (lstDTO.Count > 0)
+        {
+            rtn = "";
+            lstDTO.Sort(delegate(clsDTOQuestion2 p1, clsDTOQuestion2 p2)
+            {
+                int result = p1.sortOrder.CompareTo(p2.sortOrder);
+                if (result == 0)
+                    result = p1.medicalTerm.CompareTo(p2.medicalTerm);
+                return result;
+            });
+            foreach (clsDTOQuestion2 obj in lstDTO)
+            {
+                DataRow[] drs = objCCData.Select("question2Id=" + obj.q2Id);
+                String isChecked = drs.Length > 0 ? "1" : "0";
+
+                if (rtn == "")
+                    rtn = ID + "_" + obj.q2Id.ToString() + "|" + (obj.A2Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+                else
+                    rtn = rtn + "::" + ID + "_" + obj.q2Id.ToString() + "|" + (obj.A2Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+            }
+        }
+        return rtn;
+    }
+
+    public static string getAnswer2(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL = new clsBLQuestion();
+        clsBLDermSimpleLists objCCBL = new clsBLDermSimpleLists();
+
+        List<clsDTOAnswer2> lstDTO = objBL.GetAnswer2(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]));
+        DataTable objCCData = objCCBL.GetCCAnswer2PRO(pracid, int.Parse(IDs[0]), int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]));
+
+        string rtn = "-1";
+        if (lstDTO.Count > 0)
+        {
+            rtn = "";
+            lstDTO.Sort(delegate(clsDTOAnswer2 p1, clsDTOAnswer2 p2)
+            {
+                int result = p1.sortOrder.CompareTo(p2.sortOrder);
+                if (result == 0)
+                    result = p1.medicalTerm.CompareTo(p2.medicalTerm);
+                return result;
+            });
+            foreach (clsDTOAnswer2 obj in lstDTO)
+            {
+                DataRow[] drs = objCCData.Select("question2Answerid=" + obj.a2Id);
+                String isChecked = drs.Length > 0 ? "1" : "0";
+
+                if (rtn == "")
+                    rtn = ID + "_" + obj.a2Id.ToString() + "|" + (obj.Q3Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+                else
+                    rtn = rtn + "::" + ID + "_" + obj.a2Id.ToString() + "|" + (obj.Q3Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+            }
+        }
+        return rtn;
+    }
+    public static string getQuestion3(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL = new clsBLQuestion();
+
+        clsBLDermSimpleLists objCCBL = new clsBLDermSimpleLists();
+
+        List<clsDTOQuestion3> lstDTO = objBL.GetQuestion3(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]));
+        DataTable objCCData = objCCBL.GetCCQuestion3PRO(pracid, int.Parse(IDs[0]), int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]));
+        string rtn = "-1";
+        if (lstDTO.Count > 0)
+        {
+            rtn = "";
+            lstDTO.Sort(delegate(clsDTOQuestion3 p1, clsDTOQuestion3 p2)
+            {
+                int result = p1.sortOrder.CompareTo(p2.sortOrder);
+                if (result == 0)
+                    result = p1.medicalTerm.CompareTo(p2.medicalTerm);
+                return result;
+            });
+            foreach (clsDTOQuestion3 obj in lstDTO)
+            {
+                DataRow[] drs = objCCData.Select("question3Id=" + obj.q3Id);
+                String isChecked = drs.Length > 0 ? "1" : "0";
+
+                if (rtn == "")
+                    rtn = ID + "_" + obj.q3Id.ToString() + "|" + (obj.A3Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+                else
+                    rtn = rtn + "::" + ID + "_" + obj.q3Id.ToString() + "|" + (obj.A3Exits == 0 ? "0" : "1") + "|" + obj.medicalTerm + "|" + isChecked;
+            }
+        }
+
+        return rtn;
+    }
+
+    public static string getAnswer3(int pracid, string ID)
+    {
+        string[] IDs = ID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+        clsBLQuestion objBL = new clsBLQuestion();
+
+        clsBLDermSimpleLists objCCBL = new clsBLDermSimpleLists();
+
+        List<clsDTOAnswer3> lstDTO = objBL.GetAnswer3(pracid, int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]), int.Parse(IDs[5]));
+        DataTable objCCData = objCCBL.GetCCAnswer3PRO(pracid, int.Parse(IDs[0]), int.Parse(IDs[1]), int.Parse(IDs[2]), int.Parse(IDs[3]), int.Parse(IDs[4]), int.Parse(IDs[5]));
+        string rtn = "-1";
+        if (lstDTO.Count > 0)
+        {
+            rtn = "";
+            lstDTO.Sort(delegate(clsDTOAnswer3 p1, clsDTOAnswer3 p2)
+            {
+                int result = p1.sortOrder.CompareTo(p2.sortOrder);
+                if (result == 0)
+                    result = p1.medicalTerm.CompareTo(p2.medicalTerm);
+                return result;
+            });
+            foreach (clsDTOAnswer3 obj in lstDTO)
+            {
+                DataRow[] drs = objCCData.Select("question3Answerid=" + obj.a3Id);
+                String isChecked = drs.Length > 0 ? "1" : "0";
+                if (rtn == "")
+                    rtn = ID + "_" + obj.a3Id.ToString() + "|0|" + obj.medicalTerm + "|" + isChecked;
+                else
+                    rtn = rtn + "::" + ID + "_" + obj.a3Id.ToString() + "|0|" + obj.medicalTerm + "|" + isChecked;
+            }
+        }
+        return rtn;
+    }
+    # endregion
+}

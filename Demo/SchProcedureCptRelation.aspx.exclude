@@ -1,0 +1,995 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SchProcedureCptRelation.aspx.cs"
+    Inherits="SchProcedureCptRelation" %>
+
+<%@ Register Src="~/EHR_UserControls/BaseIntelliSenseControl.ascx" TagName="BaseIntelliSenseControl"
+    TagPrefix="uc1" %>
+<%@ Register Src="~/Settings/EHR/Custom_Forms/Control/ucPager.ascx" TagName="ucPager"
+    TagPrefix="uc1" %>
+    <html>
+<head id="Head1" runat="server">
+    <title>Add Complaint</title>
+    <link href="../../../Styles/stsCureMD_v10.css" rel="StyleSheet" />
+    <link rel="stylesheet" type="text/css" href="../../../Styles/ProviderNote.css" />
+    <script type="text/javascript" language="javascript" src="../../../Scripts/KTreeView.js"></script>
+    <script type="text/javascript" language="javascript">
+        function AddNodeInactive(parent, id, name, cssClass, showImageAhead, showPreviewIcon, hasChild, draggable) {
+            inactive = true;
+            CreateTreeItem(parent, '../../../Images/V10Icons/TreeView/project.gif', '../../../Images/V10Icons/TreeView/project.gif', id, name, null, null, cssClass, showImageAhead, showPreviewIcon, hasChild, draggable);
+            inactive = false;
+        }
+        function AddNode(parent, id, name, cssClass, showImageAhead, showPreviewIcon, hasChild, draggable) {
+            CreateTreeItem(parent, '../../../Images/V10Icons/TreeView/project.gif', '../../../Images/V10Icons/TreeView/project.gif', id, name, null, null, cssClass, showImageAhead, showPreviewIcon, hasChild, draggable);
+        }
+        function AddNode2(parent, id, name, cssClass, showImageAhead, showPreviewIcon, hasChild, draggable, deleteImagePath, selectBox, isSelectBoxChecked) {
+            CreateTreeItem(parent, '../../../Images/V10Icons/TreeView/project.gif', '../../../Images/V10Icons/TreeView/project.gif', id, name, null, null, cssClass, showImageAhead, showPreviewIcon, hasChild, draggable, deleteImagePath, selectBox, isSelectBoxChecked);
+        }		
+    </script>
+    <script type="text/vbscript" language="vbscript">
+	function Deleteconfirm()
+		Dim rtn
+		rtn = MsgBox("Do you want to remove question?" , vbYesNo ,"Delete")
+		If rtn = 6 Then
+			Deleteconfirm = true
+		Else
+			Deleteconfirm = false
+		End If
+	end function 
+    </script>
+    <style type="text/css">
+        .shadow, .content
+        {
+            position: relative;
+            bottom: 4px;
+            right: 4px;
+            width: 300px;
+            height: auto;
+        }
+        .shadow
+        {
+            background-color: #ccc;
+        }
+        .content
+        {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid Gray;
+            padding: 0.5em;
+        }
+    </style>
+    <script language="javascript" type="text/javascript">
+        function SetHeight() {
+            var height = 350;
+            try {
+                if (DivGrid.style.display != "none") {
+                    if (DivGrid.scrollHeight > 350)
+                        height = DivGrid.scrollHeight;
+
+                    DivGrid.style.height = height;
+                    parent.setHeight();
+                }
+                else if (parentDiv.style.display != "none") {
+                    if (parentDiv.scrollHeight > 350)
+                        height = parentDiv.scrollHeight;
+
+                    parentDiv.style.height = height;
+                    parent.setHeight();
+                }
+            } catch (e) { }
+        }
+
+        function ChildCancelClicked() {
+            if (document.getElementById("ifrmQuestion") != null)
+                document.getElementById("ifrmQuestion").outerHTML = "";
+            SetHeight();
+        }
+
+        function ChildDeleted() {
+            if (document.getElementById("ifrmQuestion") != null)
+                document.getElementById("ifrmQuestion").outerHTML = "";
+            form1.submit();
+            SetHeight();
+        }
+
+        function ChildSaveClicked() {
+            if (document.getElementById("ifrmQuestion") != null)
+                document.getElementById("ifrmQuestion").outerHTML = "";
+            form1.submit();
+            SetHeight();
+        }
+
+        function KKChildSaveClicked(id) {
+            document.getElementById("hdnPostBackID").value = id;
+            if (document.getElementById("ifrmQuestion") != null)
+                document.getElementById("ifrmQuestion").outerHTML = "";
+            form1.submit();
+            SetHeight();
+        }
+
+        function NewChildSaveClicked(id) {
+            document.getElementById("hdnPostBackID").value = id;
+            form1.submit();
+        }
+
+        function selected_Item(sender, e) {
+            PersistSearchControl();
+            var ArrayVal = (e._value).split("|");
+            parentDiv.style.display = 'none';
+            DivGrid.style.display = 'inline';
+            document.getElementById('DivGrid').innerHTML = '';
+            if (document.getElementById("pnlShowRecord") != null) {
+                document.getElementById("pnlShowRecord").style.display = "none";
+            }
+            if (document.getElementById("divpaging") != null) {
+                document.getElementById("divpaging").style.display = "none";
+            }
+            Initialise('DivGrid', 'rootEle', '../../../Images/V10Icons/TreeView/rowbackcolor.png', '../../../Images/V10Icons/TreeView/plus.png', '../../../Images/V10Icons/TreeView/minus.png', '../../../Images/V10Icons/TreeView/transparent.gif', '../../../Images/V10Icons/TreeView/AddQA.png', '../../../Images/V10Icons/TreeView/edit.gif', '../../../Images/V10Icons/TreeView/preview.png');
+            var desc = "";
+
+            if (ArrayVal[4] != "") {
+                desc = " - <I><font color=\"gray\">" + ArrayVal[4] + "</font></I> "
+            }
+            //AddNodeInactive		
+            var markDeleted = ArrayVal[ArrayVal.length - 1] // Active or not
+
+            if (markDeleted == 0) {
+                AddNode(rootCell, "CC_" + ArrayVal[1], ArrayVal[2] + desc, "LabelBlue", false, true, true, false);
+                Toggle("CC_" + ArrayVal[1]);
+            }
+            else
+                AddNodeInactive(rootCell, "CC_" + ArrayVal[1], ArrayVal[2] + desc, "LabelBlue", false, true, false, false);
+
+            SetHeight();
+        }
+
+        function selected_ItemQ(sender, e) {
+            var ArrayVal = (e._value).split("|");
+
+            var objtxt = document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField")
+            var id = objtxt.parentNode.parentNode.parentNode.parentNode.id.replace("spA_CC_", "");
+
+            var newID = "Q1_" + id + "_" + ArrayVal[1];
+
+            var div = document.getElementById("DCC_" + id);
+            var visible = (div.style.display != "none");
+            if (!visible)
+                Toggle("CC_" + id); // open if its closed
+
+            var CCQuestions = document.getElementById("DCC_" + id).childNodes;
+            for (var i = 0; i < CCQuestions.length; i++) {
+                if ("Tab_" + newID == CCQuestions[i].id) {
+                    alert("Question '" + ArrayVal[2] + "' already exists in this Procedure");
+                    return;
+                }
+            }
+
+            rtn = InsertDeleteQA(newID, 1);
+
+            if (rtn == "0") {
+                Toggle("CC_" + id); // close
+                div.innerHTML = "";
+                div.setAttribute("ChildPopulated", "0");
+                Toggle("CC_" + id); // reopen
+                SetHeight();
+            }
+        }
+
+
+        function ClientPopulated(sender, e) {
+            var listObject = $find('<%=BaseIntelliSenseControl1.ControlID %>');
+            listObject._popupBehavior._element.style.zIndex = 5000;
+            var complaints = sender.get_completionList().childNodes;
+            for (var i = 0; i < complaints.length; i++) {
+                var complaintsVals = (complaints[i]._value).split("|");
+                if (complaintsVals[complaintsVals.length - 1] == 1)
+                    complaints[i].style.color = "Gray";
+            }
+        }
+
+        function ClientPopulatedQ(sender, e) {
+            var listObject = $find('<%=BaseIntelliSenseControl2.ControlID %>');
+            listObject._popupBehavior._element.style.zIndex = 5000;
+        }
+
+        function SetBaseIntelliSenseControl1ContextKey() {
+            var drpdwnVal = document.getElementById("DrlstProtype").value
+            var autoComplete = $find('AutoCompleteEx');
+            autoComplete.add_populating(function () {
+                autoComplete.set_contextKey(drpdwnVal);
+            });
+        }
+    </script>
+</head>
+<body style="height: 100%">
+    <form id="form1" runat="server">
+    <table cellpadding="0" cellspacing="0" width="100%" border="0">
+        <tr class="tabRow" runat="server" id="trTabs">
+            <td id="tabTD">
+                <table border="0" cellspacing="0" cellpadding="0" id="TABLE1">
+                    <tr>
+                        <td>
+                            <%=tabPages%>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr runat="server" id="trbtnRow" class="btnRow">
+            <td style="height: 24px">
+                &nbsp; <font style="top: 1px; position: relative; cursor: hand"><font style="top: 1px;
+                    position: relative; cursor: hand"><span id="spSave">
+                        <asp:ImageButton CssClass="RemoveBorder" ID="imgAdd" runat="server" OnClientClick="AddQuestion(); return false;"
+                            ImageUrl="~/Images/V10Icons/add.gif" Width="18" Height="17"></asp:ImageButton>
+                        <asp:LinkButton CssClass="RemoveBorder" ID="lnkAdd" Font-Underline="false" Style="position: relative;
+                            top: -2px" OnClientClick="AddQuestion(); return false;" runat="server">Add</asp:LinkButton>
+                    </span></font></font>
+            </td>
+        </tr>
+        <tr style="height: 10px">
+            <td style="height: 10px">
+            </td>
+        </tr>
+        <tr runat="server" id="trSearch">
+            <td style="height: 24px; padding-left: 10px">
+                <table>
+                    <tr>
+                        <td class="Label">
+                            &nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>
+                            <uc1:BaseIntelliSenseControl ID="BaseIntelliSenseControl1" runat="server" ServiceMethod="GetProcedureIntellisense" ServicePath="~/EHRIntelliSense.asmx"
+                                Width="300px" OnClientItemSelected="selected_Item" OnClientPopulated="ClientPopulated" EnableCaching ="false" EnableViewState = "false" style=" cursor: pointer;" />
+                        </td>
+                        <td>
+                            <asp:ImageButton Width="16px" ID="imgSearch" runat="server" ImageUrl="~/Images/V10Icons/TreeView/search.png"
+                                ImageAlign="AbsMiddle" OnClick="imgSearch_Click" />
+                        </td>
+                        <td style="width: 80%; text-align: right;" class="Label">
+                            Type&nbsp;&nbsp;&nbsp; <span id="SelectBorder" style="width: 150px">
+                                <asp:DropDownList ID="DrlstProtype" runat="server" onchange="SetBaseIntelliSenseControl1ContextKey();" Style="width: 154px;">
+                                    <asp:ListItem Selected="True" Text="All" Value="All">All</asp:ListItem>
+                                        <asp:ListItem Text="Special" Value="Special"></asp:ListItem>
+                                        <asp:ListItem Text="Surgical" Value="Surgical"></asp:ListItem>
+                                        <asp:ListItem Text="Cosmetic" Value="Cosmetic"></asp:ListItem>
+                                        <asp:ListItem Text="Injection" Value="Injection"></asp:ListItem>
+                                        <asp:ListItem Text="Biopsy" Value="Biopsy"></asp:ListItem>
+                                        <asp:ListItem Text="Destruction" Value="Destruction"></asp:ListItem>
+                                        <asp:ListItem Text="Excision" Value="Excision"></asp:ListItem>
+                                        <asp:ListItem Text="MOHS" Value="MOHS"></asp:ListItem>
+                                        <asp:ListItem Text="Repair" Value="Repair"></asp:ListItem>
+                                        <asp:ListItem Text="Shave" Value="Shave"></asp:ListItem>
+                                        <asp:ListItem Text="Path" Value="Path"></asp:ListItem>
+                                        <asp:ListItem Text="Patch Test" Value="Patch Test"></asp:ListItem>
+                                        <asp:ListItem Text="Diagnostic" Value="Diagnostic"></asp:ListItem>
+                                </asp:DropDownList>
+                            </span>
+                        </td>
+                        <td style="width: 5%; text-align: right;">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr runat="server" visible="false" id="trPat">
+            <td>
+                <div style="width: 15px; display: inline">
+                </div>
+                <div style="height: 25px; display: inline; border-bottom: 2 Dotted LightGray; font-weight: bold;
+                    font-family: Tahoma; width: 96%">
+                    Procedure</div>
+                <div style="width: 15px; display: inline">
+                </div>
+            </td>
+        </tr>
+    </table>
+    <span id="tbSearchQuestion" style="display: none;">
+        <span id="Span1" ><a id="Code" style="text-decoration: none;"/>
+            <img src='../../../Images/V10Icons/Dermatology/needle_16x16-02.png' style='border: none;' />&nbsp;Code</a>
+            <uc1:BaseIntelliSenseControl ControlID="QSearch" ID="BaseIntelliSenseControl2" EnableCaching="true"
+                runat="server" ServiceMethod="GetQuestion1Intellisense" ServicePath="~/EHRIntelliSense.asmx"
+                Width="250px" OnClientItemSelected="selected_ItemQ" OnClientPopulated="ClientPopulatedQ" />
+        </span></span>
+    <asp:HiddenField ID="hdnTotalRecords" runat="server" />
+    <asp:HiddenField ID="hdnTotalPages" runat="server" />
+    <asp:HiddenField ID="hdnPageNo" runat="server" />
+    <asp:HiddenField ID="hdnPageSize" runat="server" />
+    <asp:HiddenField ID="tooltipEle" runat="server" />
+    <asp:HiddenField ID="hdnPostBackID" runat="server" />
+    <asp:HiddenField ID="hdnCode" runat="server" />
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+    </asp:ScriptManager>
+    <div id="parentDiv" style="width: 100%; height: 400px; display: none">
+    </div>
+    <div id="DivGrid" style="width: 100%; height: 400px;">
+    </div>
+    <div id="divtooltipQ" class="shadow" style="display: none">
+        <div class="content">
+            <table border="0" class="Label" style="font-size: 11px;">
+                <tr valign="top">
+                    <td style="font-weight: bold" nowrap>
+                        Medical Term
+                    </td>
+                    <td id="tdMedical">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Abbreviation
+                    </td>
+                    <td id="tdAbbr">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Single Prefix
+                    </td>
+                    <td id="tdSPrefix">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Single Suffix
+                    </td>
+                    <td id="tdSSuffix">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Sequence
+                    </td>
+                    <td id="tdSequence">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Gender
+                    </td>
+                    <td id="tdGender">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Points
+                    </td>
+                    <td id="tdPoints">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Select mode
+                    </td>
+                    <td id="tdSelectMode">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Show
+                    </td>
+                    <td id="tdShow">
+                        term name
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Association
+                    </td>
+                    <td id="tdAssociation">
+                        term name
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="divtooltipA" class="shadow" style="display: none">
+        <div class="content">
+            <table border="0" class="Label" style="font-size: 11px;">
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Medical Term : <span style="font-weight: normal" id="tdMedicalA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Abbreviation : <span style="font-weight: normal" id="tdAbbrA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Sequence : <span style="font-weight: normal" id="tdSequenceA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Gender : <span style="font-weight: normal" id="tdGenderA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Points : <span style="font-weight: normal" id="tdPointsA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Note Size : <span style="font-weight: normal" id="tdNoteSizeA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Note String : <span style="font-weight: normal" id="tdNoteStringA">term name</span>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="font-weight: bold">
+                        Association : <span style="font-weight: normal" id="tdAssociationA">term name</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div runat="server" id="divpaging" style="left: 0px; text-align: center; width: 100%;
+        font-family: Arial; font-size: 11px; border-top: solid 0px #DDDDDD;">
+        <uc1:ucPager ID="ucPager1" runat="server" />
+    </div>
+    <asp:Panel runat="server" ID="pnlShowRecord" Visible="false">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" class="ListTable">
+            <tr height="20" class="itemRow">
+                <td align="center" class="Label">
+                    No Record Found
+                </td>
+            </tr>
+        </table>
+    </asp:Panel>
+    </form>
+</body>
+</html>
+<script language="JavaScript" type="text/JavaScript">
+
+    function PersistSearchControl() {
+        var tbSearchQuestion = document.getElementById("tbSearchQuestion");
+        tbSearchQuestion.style.display = "none";
+        tbSearchQuestion.style.position = "relative";
+        tbSearchQuestion.style.top = "-2px";
+        document.body.appendChild(tbSearchQuestion);
+    }
+
+    function AddQuestion(Nav) {
+        PersistSearchControl();
+        DivGrid.innerHTML = "";
+        parentDiv.innerHTML = "";
+        parentDiv.style.display = "inline";
+        DivGrid.style.display = "none";
+        AddQuestionAnswer("CC_0", Nav);
+    }
+
+    function AddQuestionAnswer(uniqueId, Nav) {
+        if (document.getElementById("pnlShowRecord") != null) {
+            document.getElementById("pnlShowRecord").style.display = "none";
+        }
+        if (document.getElementById("divpaging") != null) {
+            document.getElementById("divpaging").style.display = "none";
+        }
+        displayChiefComplaint(uniqueId, "0", Nav)
+    }
+
+    function EditQuestionAnswer(uniqueId) {
+        displayChiefComplaint(uniqueId, "1")
+    }
+
+    function displayChiefComplaint(uniqueId, EditMode, Nav) {
+        if (uniqueId.substring(0, 3) != "CC_") {
+            Toggle(uniqueId);
+            return;
+        }
+        var strQueryString = "?EditMode=" + EditMode;
+        var strPagePath = ""
+        var uniqueIDActual = uniqueId.substring(3);
+        var width = 700;
+        var height = 400;
+        var arrdata = new Array();
+        arrdata = uniqueIDActual.split("_")
+        strPagePath = "datProCptRelation.aspx";
+        strQueryString = strQueryString + "&PageFrom=" + Nav;
+        strQueryString = strQueryString + "&ProId=" + uniqueIDActual;
+        makeFrame(document.getElementById("Tab_" + uniqueId), strPagePath + strQueryString, width, height)
+    }
+
+    function setFrameHeight(frameHeight) {
+        document.getElementById("ifrmQuestion").style.height = frameHeight + 20;
+        SetHeight();
+    }
+
+    function makeFrame(afterElement, source, width, height) {
+        var left = 0;
+        if (width != 0)
+            left = (document.body.clientWidth - width) / 2;
+        if (document.getElementById("ifrmQuestion") != null) {
+            var currentSrc = document.getElementById("ifrmQuestion").getAttribute("src");
+            document.getElementById("ifrmQuestion").outerHTML = "";
+            if (currentSrc == source) {
+                SetHeight();
+                return;
+            }
+        }
+        ifrm = document.createElement("IFRAME");
+        ifrm.setAttribute("id", "ifrmQuestion");
+
+        if (width != "0")
+            ifrm.style.width = width + "px";
+        else
+            ifrm.style.width = "100%";
+        ifrm.style.height = height + "px";
+        ifrm.style.display = "inline";
+        ifrm.style.visibility = "visible";
+
+        ifrm.style.paddingLeft = 20 + "px";
+        ifrm.frameBorder = 0;
+        ifrm.setAttribute("src", source);
+
+        if (afterElement != null) {
+            afterElement.parentNode.insertBefore(ifrm, afterElement.nextSibling);
+        }
+        else {// Add Question
+            parentDiv.appendChild(ifrm);
+        }
+        SetHeight();
+    }
+
+    function DeleteClicked(uniqueID, parentID) {
+
+        ChildCancelClicked();
+        if (parentID != "0") {
+            var parent = document.getElementById('D' + parentID);
+            var olddiv = document.getElementById("Tab_" + uniqueID);
+            parent.removeChild(olddiv);
+            olddiv = document.getElementById("D" + uniqueID);
+            parent.removeChild(olddiv);
+            if (parent.hasChildNodes() != true) {	// To remove Tree icon
+                parent.style.display = "none";
+                Toggle(parentID);
+            }
+        }
+        else {
+            document.getElementById('D' + uniqueID).outerHTML = "";
+            document.getElementById("Tab_" + uniqueID).outerHTML = "";
+        }
+    }
+
+    function ChildSaved(EditMode, SentID, ReceivedData) {
+        var arr = new Array();
+        arr = ReceivedData.split("|")
+        Initialise('parentDiv', 'rootEle', '../../../Images/V10Icons/TreeView/rowbackcolor.png', '../../../Images/V10Icons/TreeView/plus.png', '../../../Images/V10Icons/TreeView/minus.png', '../../../Images/V10Icons/TreeView/transparent.gif', '../../../Images/V10Icons/TreeView/AddQA.png', '../../../Images/V10Icons/TreeView/edit.gif', '../../../Images/V10Icons/TreeView/preview.png');
+        var desc
+        desc = "<I><font color=\"gray\">&nbsp;&nbsp;-&nbsp;&nbsp;" + arr[2] + "</font></I>"
+        AddNode(rootCell, SentID, arr[1] + desc, "LabelBlue", false, true, false, false);
+        ChildCancelClicked();
+        SetHeight();
+    }
+
+    function populateChild(uniqueId) {
+        document.body.style.backgroundColor = "LightGray";
+        document.body.style.backgroundColor.blink();
+        var rtn = GetData(uniqueId, "", "");
+        document.body.style.backgroundColor = "Transparent";
+        return rtn;
+    }
+
+    function sleep(milliSeconds) {
+
+        var startTime = new Date().getTime(); // get the current time  		
+        while (new Date().getTime() < startTime + milliSeconds); // hog cpu 
+    }
+
+    function SwapChild(uniqueId, draggedID, DroppedID) {
+
+        return GetData(uniqueId, draggedID, DroppedID);
+    }
+
+    function GetSynchronousJSONResponse(url, postData) {
+
+        var xmlhttp = null;
+        if (window.XMLHttpRequest)
+            xmlhttp = new XMLHttpRequest();
+        else if (window.ActiveXObject) {
+            if (new ActiveXObject("Microsoft.XMLHTTP"))
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            else
+                xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        // to be ensure non-cached version of response
+        url = url + "?rnd=" + Math.random();
+
+        xmlhttp.open("POST", url, false); //false means synchronous
+        xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        xmlhttp.send(postData);
+        var responseText = xmlhttp.responseText;
+        return responseText;
+    }
+
+
+    function GetData(uniqueID, dragID, dropID) {
+        var ParentSuffix = uniqueID.substring(0, 3);
+        var isComplaint = false;
+        if (ParentSuffix == "CC_") {
+            isComplaint = true;
+        }
+
+        var newPrefix = "A1_";
+        var cssClassName = "Label";
+        var showImageAhead = true;
+        if (ParentSuffix == "Q2_") {
+            newPrefix = "A2_";
+            cssClassName = "Label";
+        }
+        else if (ParentSuffix == "Q3_") {
+            newPrefix = "A3_";
+            cssClassName = "Label";
+            showImageAhead = false;
+        }
+        else if (ParentSuffix == "A1_") {
+            newPrefix = "Q2_";
+            cssClassName = "LabelBlue";
+        }
+        else if (ParentSuffix == "A2_") {
+            newPrefix = "Q3_";
+            cssClassName = "LabelBlue";
+        }
+        else if (ParentSuffix == "A3") {
+            return "0"
+        }
+        var resultActual = null;
+        if (dragID == "")
+            resultActual = GetSynchronousJSONResponse('<%= Page.ResolveUrl("SchProcedureCptRelation.aspx/GetData")%>', '{"ID":"' + uniqueID + '"}');
+        else
+            resultActual = GetSynchronousJSONResponse('<%= Page.ResolveUrl("SchProcedureCptRelation.aspx/SwapData")%>', '{"ID":"' + uniqueID + '","dragID":"' + dragID + '","dropID":"' + dropID + '"}');
+
+        result = eval('(' + resultActual + ')');
+        if (typeof (result.d) == 'undefined') {
+            return result.d = resultActual;
+        }
+        if (result.d != "-1") {
+            var arr = new Array();
+            arr = result.d.split("::")
+            var i = 0;
+            for (i = 0; i < arr.length; i++) {
+                var arrdata = new Array();
+                arr[i] = arr[i].replace(/\"/g, "");
+                arrdata = arr[i].split("|")
+                var hasChild = true;
+                if (arrdata[1] == 0)
+                    hasChild = false;
+
+                if (isComplaint) {
+                    cssClassName = "LabelBlue"
+                    newPrefix = "Q1_";
+                }
+                var draggable = newPrefix == "Q1_";
+
+                //draggable = true; 				
+
+                showImageAhead = false;
+                if (ParentSuffix == "CC_") {
+                    AddNode2(document.getElementById("D" + uniqueID), newPrefix + arrdata[0], arrdata[2], cssClassName, showImageAhead, false, hasChild, draggable, "../../../Images/V10Icons/TreeView/delete.png");
+                }
+                else {
+                    var ischecked = false;
+                    if (arrdata.length > 3) {
+                        if (arrdata[3] == "1")
+                            ischecked = true;
+                    }
+                    AddNode2(document.getElementById("D" + uniqueID), newPrefix + arrdata[0], arrdata[2], cssClassName, showImageAhead, false, hasChild, draggable, null, true, ischecked);
+                }
+            }
+            return "0"
+        }
+        else
+            return "-1";
+    }
+
+    function ShowTooltip(uniqueId) {
+
+        if (uniqueId.substring(0, 7) != "txt_CC_") {
+            document.getElementById("tooltipEle").value = uniqueId;
+            var mousePos = mouseCoords(window.event);
+            var mouseOffset = getMouseOffset(document.getElementById(uniqueId), window.event);
+            setTimeout("displayTooltip('" + uniqueId + "','" + mousePos.x + "','" + mousePos.y + "','" + mouseOffset.x + "','" + mouseOffset.y + "')", 500);
+        }
+    }
+
+    function HideTooltip(uniqueId) {
+
+        document.getElementById("tooltipEle").value = "";
+        document.getElementById("divtooltipQ").style.display = "none";
+        document.getElementById("divtooltipA").style.display = "none";
+    }
+
+    function displayTooltip(uniqueId, mousePosX, mousePosY, mouseOffsetX, mouseOffsetY) {
+
+        if (uniqueId == document.getElementById("tooltipEle").value) { // if user is still on that element
+            var data = GetTooltipData(uniqueId);
+            arrdata = data.split("|")
+            if (uniqueId.substring(4, 5) == "A") {
+                //Answer
+                //q1Id + medicalTerm + Abbreviation + sortOrder + gender + points + notesSize + notesSting +  fieldType.Replace("$", ", ");
+                document.getElementById("tdMedicalA").innerHTML = arrdata[1];
+                document.getElementById("tdAbbrA").innerHTML = arrdata[2];
+                document.getElementById("tdSequenceA").innerHTML = arrdata[3];
+                if (arrdata[4] == "M")
+                    arrdata[4] = "Male"
+                else if (arrdata[4] == "F")
+                    arrdata[4] = "Female"
+                else
+                    arrdata[4] = "Both"
+                document.getElementById("tdGenderA").innerHTML = arrdata[4];
+                document.getElementById("tdPointsA").innerHTML = arrdata[5];
+
+                if (arrdata[6] == "m")
+                    arrdata[6] = "Medium"
+                else if (arrdata[6] == "l")
+                    arrdata[6] = "Large"
+                else if (arrdata[6] == "s")
+                    arrdata[6] = "Small"
+                else if (arrdata[6] == "es")
+                    arrdata[6] = "Extra Small"
+                else if (arrdata[6] == "el")
+                    arrdata[6] = "Extra Large"
+                else
+                    arrdata[6] = "Medium"
+                document.getElementById("tdNoteSizeA").innerHTML = arrdata[6];
+                document.getElementById("tdNoteStringA").innerHTML = arrdata[7];
+                document.getElementById("tdAssociationA").innerHTML = arrdata[8];
+                document.getElementById("divtooltipA").style.display = "inline";
+                document.getElementById("divtooltipA").style.position = "absolute";
+                document.getElementById("divtooltipA").style.top = mousePosY - mouseOffsetY + 20;
+                document.getElementById("divtooltipA").style.left = mousePosX - mouseOffsetX;
+                document.getElementById("divtooltipA").style.zIndex = 99999;
+            }
+            else {
+                //Question
+                //q1Id + medicalTerm + Abbreviation + prefix + suffix + sortOrder + gender + points + ansSelection + displayQ + fieldTypeReplace("$", ", ");
+                document.getElementById("tdMedical").innerHTML = arrdata[1];
+                document.getElementById("tdAbbr").innerHTML = arrdata[2];
+                document.getElementById("tdSPrefix").innerHTML = arrdata[3];
+                document.getElementById("tdSSuffix").innerHTML = arrdata[4];
+                document.getElementById("tdSequence").innerHTML = arrdata[5];
+                if (arrdata[6] == "M")
+                    arrdata[6] = "Male"
+                else if (arrdata[6] == "F")
+                    arrdata[6] = "Female"
+                else
+                    arrdata[6] = "Both"
+                document.getElementById("tdGender").innerHTML = arrdata[6];
+                document.getElementById("tdPoints").innerHTML = arrdata[7];
+
+                if (arrdata[8] == "R")
+                    arrdata[8] = "Radio"
+                else if (arrdata[8] == "C")
+                    arrdata[8] = "Check Box"
+                else if (arrdata[8] == "D")
+                    arrdata[8] = "Drop down list"
+                else
+                    arrdata[8] = "Custom Control"
+
+                if (arrdata[8] == "Custom Control") {
+                    document.getElementById("tdSelectMode").innerHTML = "<b>CC </b>" + arrdata[11];
+                }
+                else
+                    document.getElementById("tdSelectMode").innerHTML = arrdata[8];
+
+                if (arrdata[9] == "1")
+                    document.getElementById("tdShow").innerHTML = "True";
+                else
+                    document.getElementById("tdShow").innerHTML = "False";
+                document.getElementById("tdAssociation").innerHTML = arrdata[10];
+                document.getElementById("divtooltipQ").style.display = "inline";
+                document.getElementById("divtooltipQ").style.position = "absolute";
+                document.getElementById("divtooltipQ").style.top = mousePosY - mouseOffsetY + 20;
+                document.getElementById("divtooltipQ").style.left = mousePosX - mouseOffsetX;
+                document.getElementById("divtooltipQ").style.zIndex = 99999;
+            }
+            SetHeight();
+        }
+
+    }
+
+    function GetTooltipData(uniqueID) {
+        uniqueIDActual = uniqueID.substring(4);
+        var resultActual = GetSynchronousJSONResponse('<%= Page.ResolveUrl("SchProcedureCptRelation.aspx/GetToolTipData")%>', '{"ID":"' + uniqueIDActual + '"}');
+
+        result = eval('(' + resultActual + ')');
+        if (typeof (result.d) == 'undefined') {
+            return resultActual;
+        }
+        else if (result.d != "-1") {
+            return result.d;
+        }
+    }
+
+    function DeleteData(uniqueID) {
+
+        var resultActual = GetSynchronousJSONResponse('<%= Page.ResolveUrl("SchProcedureCptRelation.aspx/DeleteData")%>', '{"ID":"' + uniqueID + '"}');
+        result = eval('(' + resultActual + ')');
+        if (typeof (result.d) == 'undefined') {
+            return resultActual;
+        }
+        else if (result.d != "-1") {
+            return result.d;
+        }
+    }
+
+    function InsertDeleteQA(uniqueID, doInsert) {
+
+        var resultActual = GetSynchronousJSONResponse('<%= Page.ResolveUrl("SchProcedureCptRelation.aspx/InsertDeleteQAPRO")%>', '{"ID":"' + uniqueID + '","insert":"' + doInsert + '"}');
+        result = eval('(' + resultActual + ')');
+        if (typeof (result.d) == 'undefined') {
+            return resultActual;
+        }
+        else if (result.d != "-1") {
+            return result.d;
+        }
+
+    }
+
+    function PreviewQuestion(uniqueID) {
+
+        var inactivebit = 0;
+        if (document.getElementById("txt_" + uniqueID).style.color == "gray")
+            inactivebit = 1;
+
+        var uniqueIDActual = uniqueID.substring(3);
+        var txt = document.getElementById("txt_" + uniqueID).innerHTML;
+        var index = txt.indexOf("<I>");
+        if (index > 0)
+            txt = txt.substring(0, index - 1);
+        var qString = "?Name=" + txt + "&ComponentName=PRO&EntityID=" + uniqueIDActual + "&bactive=" + inactivebit; ;
+        var strPagePath = "../../../Settings/EHR/Questions/datComplaintPreview.aspx" + qString;
+        makeFrame(document.getElementById("Tab_" + uniqueID), strPagePath, 820, 0)
+    }
+
+    function QAChecked(uniqueId) {
+
+        var doInsert = "1";
+        if (document.getElementById("sel_" + uniqueId).checked == false)
+            doInsert = "0";
+
+        rtn = InsertDeleteQA(uniqueId, doInsert);
+
+        if (rtn == "0") {
+            var div = document.getElementById("D" + uniqueId);
+            var visible = (div.style.display != "none");
+            div.innerHTML = "";
+
+            div.setAttribute("ChildPopulated", "0");
+
+            if (visible)
+                Toggle(uniqueId);
+        }
+        else {
+            cancelEvent(window.event)
+        }
+    }
+
+    function DeleteTreeNode(uniqueID) {
+
+        if (Deleteconfirm() == true) {
+            var delResult = DeleteData(uniqueID);
+            if (delResult == "0") {
+
+                var div = document.getElementById('D' + uniqueID);
+                var tab = document.getElementById("Tab_" + uniqueID)
+
+                var patentID = tab.getAttribute("parentID");
+                var parent = document.getElementById(patentID);
+                div.outerHTML = "";
+                tab.outerHTML = "";
+
+                if (parent.hasChildNodes() != true) {	// To remove Tree icon 					
+                    parent.style.display = "none";
+                    Toggle(patentID.substring(1));
+                }
+            }
+            else {
+                alert(delResult);
+            }
+        }
+    }
+
+    document.getElementById("divtooltipQ").style.display = "none";
+    document.getElementById("divtooltipA").style.display = "none";
+
+    document.onclick = function () {
+        SetHeight();
+    };
+    SetHeight();
+    if (document.getElementById("pnlShowRecord") != null) {
+        DivGrid.style.display = "none";
+        parentDiv.style.display = "none";
+    }
+
+    document.onkeydown = function () {
+        if (window.event.srcElement == document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField") || window.event.srcElement == document.all("<%=BaseIntelliSenseControl1.ClientID%>" + "_txtField")) {
+            if (window.event.keyCode == 13)
+                return false;
+        }
+        if (event.keyCode == 27) {
+
+            window.close();
+        }
+    }
+
+    document.onmousemove = function () {
+        mouseMove2(window.event);
+        mouseMove(window.event);
+    };
+
+    function mouseMove2(ev) {
+        var thisObject = window.event.srcElement;
+        if (thisObject == document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField"))
+            return;
+
+        var tagName = thisObject.tagName;
+        var currentObj
+        if (tagName == "TD")
+            currentObj = thisObject.parentNode.parentNode.parentNode;
+        else if (tagName == "TR")
+            currentObj = thisObject.parentNode.parentNode;
+        else if (tagName == "TBODY")
+            currentObj = obj.parentNode;
+        else if (tagName == "TABLE")
+            currentObj = thisObject;
+
+        if (currentObj != null && typeof (currentObj.id) != "undefined") {
+
+            if (currentObj.id.substring(0, 7) == "Tab_CC_") {
+                var tbSearchQuestion = document.getElementById("tbSearchQuestion");
+                if (document.getElementById("txt_" + currentObj.id.substring(4)).style.color == "gray") {
+                    tbSearchQuestion.style.display = "none";
+                }
+                else {
+                    var proname = document.getElementById("txt_" + currentObj.id.substring(4)).innerText
+                    proname = proname.substring(0, proname.indexOf("-"));
+
+                    if (document.getElementById("hdnCode").value != "" && document.getElementById(document.getElementById("hdnCode").value) != null)
+                        document.getElementById(document.getElementById("hdnCode").value).style.display = "none";
+
+                    document.getElementById("Code").setAttribute("href", "lstCptCode.aspx?Proid=" + currentObj.id.substring(7, currentObj.id.length) + "&Proname=" + proname);
+                    document.getElementById("hdnCode").value = currentObj.id.substring(7, currentObj.id.length);
+
+                    tbSearchQuestion.style.display = "inline";
+                    tbSearchQuestion.style.position = "relative";
+                    tbSearchQuestion.style.top = "-2px";
+                    document.getElementById("spA_" + currentObj.id.substring(4)).appendChild(tbSearchQuestion);
+                    var listObject = $find('<%=BaseIntelliSenseControl2.ControlID %>');
+
+                    if (listObject != null) {
+                        if (listObject._popupBehavior != null) {
+                            if (listObject._popupBehavior._element != null) {
+                                document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField").value = "";
+                                listObject._popupBehavior._element.style.display = "none";
+                                document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField").style.display = "inline";
+
+                                document.all("TABLE1").focus();
+                                document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField").style.backgroundImage = "url(../../../Images/V10ICons/AssociateQuestion.png)";
+                                document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField").style.backgroundRepeat = "no-repeat";
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField").onclick = function () {
+        document.all("<%=BaseIntelliSenseControl2.ClientID%>" + "_txtField").style.backgroundImage = "";
+        cancelEvent(window.event);
+    };
+    document.all("<%=BaseIntelliSenseControl1.ClientID%>" + "_txtField").style.cursor = "mouse";
+</script>

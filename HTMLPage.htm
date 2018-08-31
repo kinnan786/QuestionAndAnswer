@@ -1,0 +1,1279 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>html - Why does CSS margin top not work? - Stack Overflow</title>
+    <link rel="shortcut icon" href="http://cdn.sstatic.net/stackoverflow/img/favicon.ico">
+    <link rel="apple-touch-icon" href="http://cdn.sstatic.net/stackoverflow/img/apple-touch-icon.png">
+    <link rel="search" type="application/opensearchdescription+xml" title="Stack Overflow"
+        href="/opensearch.xml">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.sstatic.net/js/stub.js?v=c014461b9109"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.sstatic.net/stackoverflow/all.css?v=018f2a6605bc">
+    <link rel="canonical" href="http://stackoverflow.com/questions/9519841/why-does-css-margin-top-not-work">
+    <link rel="alternate" type="application/atom+xml" title="Feed for question 'Why does CSS margin top not work?'"
+        href="/feeds/question/9519841">
+    <meta name="title" content="html - Why does CSS margin top not work? - Stack Overflow">
+    <link rel="image_src" href="http://sstatic.net/stackoverflow/img/apple-touch-icon.png">
+    <script type="text/javascript">
+
+        StackExchange.ready(function () {
+
+            StackExchange.question.init({ votesCast: [], autoShowCommentHelp: true, showAnswerHelp: true, totalCommentCount: 6, shownCommentCount: 5, highlightColor: '#F4A83D', backgroundColor: '#FFF', questionId: 9519841 });
+
+            styleCode();
+        });
+    </script>
+    <script type="text/javascript">
+        StackExchange.init({ "stackAuthUrl": "https://stackauth.com", "serverTime": 1330623840, "styleCode": true, "enableUserHovercards": true, "site": { "name": "Stack Overflow", "description": "Q&A for professional and enthusiast programmers" }, "user": { "isRegistered": true, "guid": "4fd19954-3b28-413c-b5a9-35e60038b98f", "accountId": 1239689, "gravatar": "\u003cdiv class=\"\"\u003e\u003cimg src=\"http://www.gravatar.com/avatar/65477e27827a70d31932f4873b19e279?s=32&amp;d=identicon&amp;r=PG\" alt=\"\" width=\"32\" height=\"32\"\u003e\u003c/div\u003e", "profileUrl": "http://stackoverflow.com/users/1202610/kinnan-nawaz", "fkey": "ae51cd80ba3bbb7f4d497416eef196cb", "inboxUnviewedCount": 0} });
+        StackExchange.using.setCacheBreakers({ "js/prettify-full.js": "4ed9aa4b8d0e", "js/moderator.js": "adde5b27c625", "js/full-anon.js": "10196d1a84c9", "js/full.js": "8a44459d14eb", "js/wmd.js": "b8e2098f7d36", "js/third-party/jquery.autocomplete.min.js": "e5f01e97f7c3", "js/mobile.js": "9e820382dd06", "js/help.js": "fc9fb0517db2", "js/tageditor.js": "c1ba807b32aa", "js/tageditornew.js": "ab523171ddc9", "js/inline-tag-editing.js": "be882e188985", "js/revisions.js": "8c6bcd93b7fe", "js/suggested-edits.js": "92144b1c12be", "js/probes.js": "beb933322ff0" });
+        
+    </script>
+</head>
+<body class="question-page">
+    <noscript>
+        <div id="noscript-padding">
+        </div>
+    </noscript>
+    <div id="notify-container">
+    </div>
+    <div id="overlay-header">
+    </div>
+    <div id="custom-header">
+    </div>
+    <div class="container">
+        <div id="header">
+            <div id="portalLink">
+                <a class="genu" href="http://stackexchange.com" onclick="StackExchange.ready(function(){genuwine.click();});return false;">
+                    Stack Exchange</a>
+            </div>
+            <div id="topbar">
+                <div id="hlinks">
+                    <span id="hlinks-user"><span class="profile-triangle">&#9662;</span><a href="/users/1202610/kinnan-nawaz"
+                        class="profile-link">Kinnan Nawaz</a>&nbsp;<a href="/users/1202610/kinnan-nawaz?tab=reputation"><span
+                            class="reputation-score" title="your reputation; view reputation changes" dir="ltr">1</span></a>
+                        <span class="lsep">|</span> </span><span id="hlinks-nav"></span><span id="hlinks-custom">
+                            <a href="http://chat.stackoverflow.com">chat</a> <span class="lsep">|</span> <a href="http://meta.stackoverflow.com">
+                                meta</a> <span class="lsep">|</span> <a href="/about">about</a> <span class="lsep">|</span>
+                            <a href="/faq">faq</a> </span>
+                </div>
+                <div id="hsearch">
+                    <form id="search" action="/search" method="get" autocomplete="off">
+                    <div>
+                        <input autocomplete="off" name="q" class="textbox" placeholder="search" tabindex="1"
+                            type="text" maxlength="140" size="28" value="">
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <br class="cbt">
+            <div id="hlogo">
+                <a href="/">Stack Overflow</a>
+            </div>
+            <div id="hmenus">
+                <div class="nav mainnavs">
+                    <ul>
+                        <li class="youarehere"><a id="nav-questions" href="/questions">Questions</a></li>
+                        <li><a id="nav-tags" href="/tags">Tags</a></li>
+                        <li><a id="nav-users" href="/users">Users</a></li>
+                        <li><a id="nav-badges" href="/badges">Badges</a></li>
+                        <li><a id="nav-unanswered" href="/unanswered">Unanswered</a></li>
+                    </ul>
+                </div>
+                <div class="nav askquestion">
+                    <ul>
+                        <li><a id="nav-askquestion" href="/questions/ask">Ask Question</a> </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            <div itemscope itemtype="http://schema.org/Article">
+                <link itemprop="image" href="http://cdn.sstatic.net/stackoverflow/img/apple-touch-icon.png">
+                <div id="question-header">
+                    <h1 itemprop="name">
+                        <a href="/questions/9519841/why-does-css-margin-top-not-work" class="question-hyperlink">
+                            Why does CSS margin top not work?</a></h1>
+                </div>
+                <div id="mainbar">
+                    <div class="question" id="question" data-questionid="9519841">
+                        <div class="everyonelovesstackoverflow" id="adzerk1">
+                        </div>
+                        <table>
+                            <tr>
+                                <td class="votecell">
+                                    <div class="vote">
+                                        <input type="hidden" value="9519841">
+                                        <a class="vote-up-off" title="This question shows research effort; it is useful and clear (click again to undo)">
+                                            up vote</a> <span class="vote-count-post">6</span> <a class="vote-down-off" title="This question does not show any research effort; it is unclear or not useful (click again to undo)">
+                                                down vote</a> <a class="star-off" href="#" title="This is a favorite question (click again to undo)">
+                                                    favorite</a>
+                                        <div class="favoritecount">
+                                            <b>1</b></div>
+                                        <script type="text/javascript">
+                                            StackExchange.ready(function () {
+                                                var shareUrl = 'http%3a%2f%2fstackoverflow.com%2fq%2f9519841%2f1202610';
+                                                var shareMsg = 'Why+does+CSS+margin+top+not+work%3f';
+
+                                                StackExchange.share.gplus($('#gp-share-9519841'), shareUrl, shareMsg);
+                                                StackExchange.share.facebook($('#fb-share-9519841'), shareUrl, shareMsg);
+                                                StackExchange.share.twitter($('#twitter-share-9519841'), shareUrl, shareMsg);
+                                            });
+                                        </script>
+                                        <a id="gp-share-9519841" class="gp-share" title="share link to this question on Google+">
+                                            share [g+]</a> <a id="fb-share-9519841" class="fb-share" title="share link to this question on Facebook">
+                                                share [fb]</a> <a id="twitter-share-9519841" class="twitter-share" title="share link to this question on Twitter">
+                                                    share [tw]</a>
+                                    </div>
+                                </td>
+                                <td class="postcell">
+                                    <div>
+                                        <div class="post-text" itemprop="description">
+                                            <p>
+                                                I try to add margin values on a div inside another div. All works fine except the
+                                                top value, it seems to be ignored. But why?</p>
+                                            <p>
+                                                <strong>What I expected:</strong><br>
+                                                <img src="http://i.stack.imgur.com/WFkp8.jpg" alt="What I expected with margin:50px 50px 50px 50px;"></p>
+                                            <p>
+                                                <strong>What I get:</strong><br>
+                                                <img src="http://i.stack.imgur.com/I3xJz.jpg" alt="What I get with margin:50px 50px 50px 50px;"></p>
+                                            <p>
+                                                <strong>CSS:</strong></p>
+                                            <pre><code>#outer { width:500px; height:200px; background:#FFCCCC; margin:50px auto
+                                                0 auto; display:block; } #inner { background:#FFCC33; margin:50px 50px 50px 50px;
+                                                padding:10px; display:block; } </code></pre>
+                                            <p>
+                                                <strong>HTML:</strong></p>
+                                            <pre><code>&lt;div id="outer"&gt; &lt;div id="inner"&gt; Hello world! &lt;/div&gt; &lt;/div&gt;
+                                            </code></pre>
+                                            <p>
+                                                <a href="http://www.w3schools.com/css/css_margin.asp" rel="nofollow">W3Schools</a>
+                                                have no explanation to why margin behave this way.</p>
+                                        </div>
+                                        <div class="post-taglist">
+                                            <a href="/questions/tagged/html" class="post-tag" title="show questions tagged 'html'"
+                                                rel="tag">html</a> <a href="/questions/tagged/css" class="post-tag" title="show questions tagged 'css'"
+                                                    rel="tag">css</a> <a href="/questions/tagged/margin" class="post-tag" title="show questions tagged 'margin'"
+                                                        rel="tag">margin</a>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/q/9519841/1202610" title="short permalink to this question" id="link-post-9519841">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9519841/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info user-hover">
+                                                        <div class="user-action-time">
+                                                            edited <a href="/posts/9519841/revisions" title="show all edits to this post"><span
+                                                                title="2012-03-01 17:11:35Z" class="relativetime">32 mins ago</span></a></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/106224/boltclock">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/b18f87cf0e7706ab763c2f90e27a55de?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/106224/boltclock">BoltClock</a><span class="mod-flair" title="moderator">&#9830;</span><br>
+                                                            <span class="reputation-score" title="reputation score 95220" dir="ltr">95.2k</span><span
+                                                                title="13 gold badges"><span class="badge1"></span><span class="badgecount">13</span></span><span
+                                                                    title="132 silver badges"><span class="badge2"></span><span class="badgecount">132</span></span><span
+                                                                        title="356 bronze badges"><span class="badge3"></span><span class="badgecount">356</span></span></div>
+                                                    </div>
+                                                </td>
+                                                <td class="post-signature owner">
+                                                    <div class="user-info">
+                                                        <div class="user-action-time">
+                                                            asked <span title="2012-03-01 16:17:34Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/266642/jamietelin">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/4d45a9b79038183fde12b4f660789d42?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/266642/jamietelin">jamietelin</a><br>
+                                                            <span class="reputation-score" title="reputation score" dir="ltr">795</span><span
+                                                                title="3 silver badges"><span class="badge2"></span><span class="badgecount">3</span></span><span
+                                                                    title="14 bronze badges"><span class="badge3"></span><span class="badgecount">14</span></span></div>
+                                                    </div>
+                                                    <br class="cbt">
+                                                    <div class="accept-rate accept-answer-link" title="this user has accepted an answer for 30 of 31 eligible questions">
+                                                        97% accept rate</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="votecell">
+                                </td>
+                                <td>
+                                    <div id="comments-9519841" class="comments">
+                                        <table>
+                                            <tbody>
+                                                <tr id="comment-12057699" class="comment">
+                                                    <td class="comment-actions">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="comment-score">
+                                                                        <span title="number of 'great comment' votes received" class="cool">1</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td class="comment-text">
+                                                        <div>
+                                                            <span class="comment-copy">did you try floating the inner one?</span> &ndash;&nbsp;<a
+                                                                href="/users/671943/john-b" title="322 reputation" class="comment-user">John B</a>
+                                                            <span class="comment-date" dir="ltr"><span title="2012-03-01 16:20:08Z">1 hour ago</span></span></div>
+                                                    </td>
+                                                </tr>
+                                                <tr id="comment-12057742" class="comment">
+                                                    <td>
+                                                    </td>
+                                                    <td class="comment-text">
+                                                        <div>
+                                                            <span class="comment-copy">hum.. With <code>float:left;</code> it works... but why is
+                                                                this needed. I do not want it to float. And why does margin for left/right work?</span>
+                                                            &ndash;&nbsp;<a href="/users/266642/jamietelin" title="795 reputation" class="comment-user owner">jamietelin</a>
+                                                            <span class="comment-date" dir="ltr"><span title="2012-03-01 16:22:07Z">1 hour ago</span></span></div>
+                                                    </td>
+                                                </tr>
+                                                <tr id="comment-12057808" class="comment">
+                                                    <td class="comment-actions">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="comment-score">
+                                                                        <span title="number of 'great comment' votes received" class="cool">2</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td class="comment-text">
+                                                        <div>
+                                                            <span class="comment-copy">See my answer for an explanation.</span> &ndash;&nbsp;<a
+                                                                href="/users/106224/boltclock" title="95220 reputation" class="comment-user">BoltClock<span
+                                                                    class="mod-flair" title="moderator">&#9830;</span></a> <span class="comment-date"
+                                                                        dir="ltr"><span title="2012-03-01 16:24:55Z">1 hour ago</span></span></div>
+                                                    </td>
+                                                </tr>
+                                                <tr id="comment-12057879" class="comment">
+                                                    <td class="comment-actions">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="comment-score">
+                                                                        <span title="number of 'great comment' votes received" class="cool">1</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td class="comment-text">
+                                                        <div>
+                                                            <span class="comment-copy">Welcome to the fun world of the CSS margin collapse algorithm!</span>
+                                                            &ndash;&nbsp;<a href="/users/477127/gordonm" title="6760 reputation" class="comment-user">GordonM</a>
+                                                            <span class="comment-date" dir="ltr"><span title="2012-03-01 16:27:59Z">1 hour ago</span></span></div>
+                                                    </td>
+                                                </tr>
+                                                <tr id="comment-12058204" class="comment">
+                                                    <td>
+                                                    </td>
+                                                    <td class="comment-text">
+                                                        <div>
+                                                            <span class="comment-copy">You actually <i>trust</i> W3Schools?</span> &ndash;&nbsp;<a
+                                                                href="/users/626833/jrg" title="251 reputation" class="comment-user">jrg</a>
+                                                            <span class="comment-date" dir="ltr"><span title="2012-03-01 16:40:28Z">1 hour ago</span></span></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <a id="comments-link-9519841" class="comments-link" title="expand to show all comments on this post">
+                                        show <b>1</b> more comment</a>
+                                    <div class="was-this-helpful">
+                                        feedback
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="answers">
+                        <a name="tab-top"></a>
+                        <div id="answers-header">
+                            <div class="subheader answers-subheader">
+                                <h2>
+                                    6 Answers</h2>
+                                <div id="tabs">
+                                    <a href="/questions/9519841/why-does-css-margin-top-not-work?answertab=active#tab-top"
+                                        title="Answers with the latest activity first">active</a> <a href="/questions/9519841/why-does-css-margin-top-not-work?answertab=oldest#tab-top"
+                                            title="Answers in the order they were provided">oldest</a> <a class="youarehere"
+                                                href="/questions/9519841/why-does-css-margin-top-not-work?answertab=votes#tab-top"
+                                                title="Answers with the highest score first">votes</a>
+                                </div>
+                            </div>
+                        </div>
+                        <a name="9519933"></a>
+                        <div id="answer-9519933" class="answer" data-answerid="9519933">
+                            <table>
+                                <tr>
+                                    <td class="votecell">
+                                        <div class="vote">
+                                            <input type="hidden" value="9519933">
+                                            <a class="vote-up-off" title="This answer is useful (click again to undo)">up vote</a>
+                                            <span class="vote-count-post">7</span> <a class="vote-down-off" title="This answer is not useful (click again to undo)">
+                                                down vote</a> <span class="vote-accepted-on" title="The question owner accepted this as the best answer 1 hour ago">
+                                                    accepted</span>
+                                        </div>
+                                    </td>
+                                    <td class="answercell">
+                                        <div class="post-text">
+                                            <p>
+                                                You're actually seeing the top margin of the <code>#inner</code> element <a href="http://www.w3.org/TR/CSS2/box.html#collapsing-margins"
+                                                    rel="nofollow">collapse</a> into the top edge of the <code>#outer</code> element,
+                                                leaving only the <code>#outer</code> margin intact.</p>
+                                            <p>
+                                                Here are the relevant points from the spec:</p>
+                                            <blockquote>
+                                                <p>
+                                                    Adjoining vertical margins collapse</p>
+                                                <p>
+                                                    [...]</p>
+                                                <p>
+                                                    Two margins are <em>adjoining</em> if and only if:</p>
+                                                <ul>
+                                                    <li>both belong to in-flow block-level boxes that participate in the same block formatting
+                                                        context</li>
+                                                    <li>no line boxes, no clearance, no padding and no border separate them</li>
+                                                    <li>both belong to vertically-adjacent box edges, i.e. form one of the following pairs:
+                                                        <ul>
+                                                            <li>top margin of a box and top margin of its first in-flow child</li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </blockquote>
+                                            <p>
+                                                The reason why <a href="http://stackoverflow.com/questions/9519841/why-does-css-margin-top-not-work/9519933#comment12057699_9519841">
+                                                    floating</a> either of your <code>div</code> elements, setting either of them
+                                                to <a href="http://stackoverflow.com/a/9519896/106224"><code>inline-block</code></a>,
+                                                or setting <a href="http://stackoverflow.com/a/9519937/106224"><code>overflow: auto</code>
+                                                    to <code>#outer</code></a> prevents the margin collapse is because:</p>
+                                            <blockquote>
+                                                <ul>
+                                                    <li>Margins between a floated box and any other box do not collapse (not even between
+                                                        a float and its in-flow children).</li>
+                                                    <li>Margins of elements that establish new block formatting contexts (such as floats
+                                                        and elements with 'overflow' other than 'visible') do not collapse with their in-flow
+                                                        children.</li>
+                                                    <li>Margins of inline-block boxes do not collapse (not even with their in-flow children).</li>
+                                                </ul>
+                                            </blockquote>
+                                            <p>
+                                                The left and right margins behave as you expect because:</p>
+                                            <blockquote>
+                                                <p>
+                                                    Horizontal margins never collapse.</p>
+                                            </blockquote>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/a/9519933/1202610" title="short permalink to this answer" id="link-post-9519933">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9519933/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info">
+                                                        <div class="user-action-time">
+                                                            edited <a href="/posts/9519933/revisions" title="show all edits to this post"><span
+                                                                title="2012-03-01 16:59:42Z" class="relativetime">44 mins ago</span></a></div>
+                                                        <div class="user-gravatar32">
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <br>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info user-hover">
+                                                        <div class="user-action-time">
+                                                            answered <span title="2012-03-01 16:22:55Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/106224/boltclock">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/b18f87cf0e7706ab763c2f90e27a55de?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/106224/boltclock">BoltClock</a><span class="mod-flair" title="moderator">&#9830;</span><br>
+                                                            <span class="reputation-score" title="reputation score 95220" dir="ltr">95.2k</span><span
+                                                                title="13 gold badges"><span class="badge1"></span><span class="badgecount">13</span></span><span
+                                                                    title="132 silver badges"><span class="badge2"></span><span class="badgecount">132</span></span><span
+                                                                        title="356 bronze badges"><span class="badge3"></span><span class="badgecount">356</span></span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="votecell">
+                                    </td>
+                                    <td>
+                                        <div id="comments-9519933" class="comments">
+                                            <table>
+                                                <tbody>
+                                                    <tr id="comment-12057912" class="comment">
+                                                        <td>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div>
+                                                                <span class="comment-copy">Aaaah, thanks just the information I was looking for. Still
+                                                                    it is pretty stupid and not logical.</span> &ndash;&nbsp;<a href="/users/266642/jamietelin"
+                                                                        title="795 reputation" class="comment-user owner">jamietelin</a> <span class="comment-date"
+                                                                            dir="ltr"><span title="2012-03-01 16:29:16Z">1 hour ago</span></span></div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="comment-12058117" class="comment">
+                                                        <td>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div>
+                                                                <span class="comment-copy">I&#39;ll just say that it takes a little getting used to
+                                                                    :)</span> &ndash;&nbsp;<a href="/users/106224/boltclock" title="95220 reputation"
+                                                                        class="comment-user">BoltClock<span class="mod-flair" title="moderator">&#9830;</span></a>
+                                                                <span class="comment-date" dir="ltr"><span title="2012-03-01 16:37:00Z">1 hour ago</span></span></div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="was-this-helpful">
+                                            feedback
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="everyonelovesstackoverflow" id="adzerk3">
+                        </div>
+                        <a name="9519896"></a>
+                        <div id="answer-9519896" class="answer" data-answerid="9519896">
+                            <table>
+                                <tr>
+                                    <td class="votecell">
+                                        <div class="vote">
+                                            <input type="hidden" value="9519896">
+                                            <a class="vote-up-off" title="This answer is useful (click again to undo)">up vote</a>
+                                            <span class="vote-count-post">4</span> <a class="vote-down-off" title="This answer is not useful (click again to undo)">
+                                                down vote</a>
+                                        </div>
+                                    </td>
+                                    <td class="answercell">
+                                        <div class="post-text">
+                                            <p>
+                                                Try using <code>display: inline-block;</code> on the inner div.</p>
+                                            <pre><code>#outer { width:500px; height:200px; background:#FFCCCC; margin:50px auto
+                                                0 auto; display:block; } #inner { background:#FFCC33; margin:50px 50px 50px 50px;
+                                                padding:10px; display:inline-block; } </code></pre>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/a/9519896/1202610" title="short permalink to this answer" id="link-post-9519896">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9519896/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info">
+                                                        <div class="user-action-time">
+                                                            answered <span title="2012-03-01 16:20:53Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/585339/gatoralli">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/a003233b3ffb20b07a29c6757f361560?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/585339/gatoralli">GatorAlli</a><br>
+                                                            <span class="reputation-score" title="reputation score" dir="ltr">459</span><span
+                                                                title="1 silver badge"><span class="badge2"></span><span class="badgecount">1</span></span><span
+                                                                    title="5 bronze badges"><span class="badge3"></span><span class="badgecount">5</span></span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="votecell">
+                                    </td>
+                                    <td>
+                                        <div id="comments-9519896" class="comments">
+                                            <table>
+                                                <tbody>
+                                                    <tr id="comment-12057779" class="comment">
+                                                        <td>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div>
+                                                                <span class="comment-copy">Good answer. Would be better if it explained why this change
+                                                                    fixes the problem.</span> &ndash;&nbsp;<a href="/users/30018/johnfx" title="15672 reputation"
+                                                                        class="comment-user">JohnFx</a> <span class="comment-date" dir="ltr"><span title="2012-03-01 16:23:39Z">
+                                                                            1 hour ago</span></span></div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="comment-12057827" class="comment">
+                                                        <td>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div>
+                                                                <span class="comment-copy">Ok, that is freaky! Why does that work? What is the logical
+                                                                    explanation to why it doesn&#39;t work as one would expect. Margin left / right
+                                                                    works without <code>display:inline-block;</code>. Also set back for when using <code>
+                                                                        display:inline-block;</code> is that you lose the width of 100% on the div.</span>
+                                                                &ndash;&nbsp;<a href="/users/266642/jamietelin" title="795 reputation" class="comment-user owner">jamietelin</a>
+                                                                <span class="comment-date" dir="ltr"><span title="2012-03-01 16:25:40Z">1 hour ago</span></span></div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="comment-12057837" class="comment">
+                                                        <td>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div>
+                                                                <span class="comment-copy">switching it to inline-block forces the browser to reevaluate
+                                                                    the size of the div after its placed and other rules are applied.</span> &ndash;&nbsp;<a
+                                                                        href="/users/671943/john-b" title="322 reputation" class="comment-user">John B</a>
+                                                                <span class="comment-date" dir="ltr"><span title="2012-03-01 16:26:12Z">1 hour ago</span></span></div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="was-this-helpful">
+                                            feedback
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a name="9519937"></a>
+                        <div id="answer-9519937" class="answer" data-answerid="9519937">
+                            <table>
+                                <tr>
+                                    <td class="votecell">
+                                        <div class="vote">
+                                            <input type="hidden" value="9519937">
+                                            <a class="vote-up-off" title="This answer is useful (click again to undo)">up vote</a>
+                                            <span class="vote-count-post">2</span> <a class="vote-down-off" title="This answer is not useful (click again to undo)">
+                                                down vote</a>
+                                        </div>
+                                    </td>
+                                    <td class="answercell">
+                                        <div class="post-text">
+                                            <p>
+                                                Not sure why what you have doesn't work, but you can add</p>
+                                            <p>
+                                                <code>overflow: auto;</code>
+                                            </p>
+                                            <p>
+                                                to the outer div.</p>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/a/9519937/1202610" title="short permalink to this answer" id="link-post-9519937">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9519937/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info user-hover">
+                                                        <div class="user-action-time">
+                                                            answered <span title="2012-03-01 16:23:28Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/74022/brandon">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/c6c819f000460429a5f0239240326a45?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/74022/brandon">Brandon</a><br>
+                                                            <span class="reputation-score" title="reputation score 19717" dir="ltr">19.7k</span><span
+                                                                title="4 gold badges"><span class="badge1"></span><span class="badgecount">4</span></span><span
+                                                                    title="32 silver badges"><span class="badge2"></span><span class="badgecount">32</span></span><span
+                                                                        title="78 bronze badges"><span class="badge3"></span><span class="badgecount">78</span></span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="votecell">
+                                    </td>
+                                    <td>
+                                        <div id="comments-9519937" class="comments">
+                                            <table>
+                                                <tbody>
+                                                    <tr id="comment-12057959" class="comment">
+                                                        <td>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div>
+                                                                <span class="comment-copy">Loads of different solutions to this problem. Thanks! This
+                                                                    answer combined with @BoltClock&#180;s answer provides good information on why this
+                                                                    solution does work.</span> &ndash;&nbsp;<a href="/users/266642/jamietelin" title="795 reputation"
+                                                                        class="comment-user owner">jamietelin</a> <span class="comment-date" dir="ltr"><span
+                                                                            title="2012-03-01 16:31:21Z">1 hour ago</span></span></div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="was-this-helpful">
+                                            feedback
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a name="9520022"></a>
+                        <div id="answer-9520022" class="answer" data-answerid="9520022">
+                            <table>
+                                <tr>
+                                    <td class="votecell">
+                                        <div class="vote">
+                                            <input type="hidden" value="9520022">
+                                            <a class="vote-up-off" title="This answer is useful (click again to undo)">up vote</a>
+                                            <span class="vote-count-post">2</span> <a class="vote-down-off" title="This answer is not useful (click again to undo)">
+                                                down vote</a>
+                                        </div>
+                                    </td>
+                                    <td class="answercell">
+                                        <div class="post-text">
+                                            <p>
+                                                If you add any padding to <code>#outer</code>, it works.</p>
+                                            <p>
+                                                <a href="http://dabblet.com/gist/1951043" rel="nofollow">Demo</a>
+                                            </p>
+                                            <pre><code>#outer { width:500px; height:200px; background:#FFCCCC; margin:50px auto
+                                                0 auto; display:block; padding-top:1px; } </code></pre>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/a/9520022/1202610" title="short permalink to this answer" id="link-post-9520022">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9520022/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info">
+                                                        <div class="user-action-time">
+                                                            answered <span title="2012-03-01 16:28:32Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/1052923/bookcasey">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/7e678112da2ad6e854e9ffb56a22385f?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/1052923/bookcasey">bookcasey</a><br>
+                                                            <span class="reputation-score" title="reputation score" dir="ltr">2,905</span><span
+                                                                title="3 silver badges"><span class="badge2"></span><span class="badgecount">3</span></span><span
+                                                                    title="17 bronze badges"><span class="badge3"></span><span class="badgecount">17</span></span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="votecell">
+                                    </td>
+                                    <td>
+                                        <div id="comments-9520022" class="comments dno">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="was-this-helpful">
+                                            feedback
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a name="9519925"></a>
+                        <div id="answer-9519925" class="answer" data-answerid="9519925">
+                            <table>
+                                <tr>
+                                    <td class="votecell">
+                                        <div class="vote">
+                                            <input type="hidden" value="9519925">
+                                            <a class="vote-up-off" title="This answer is useful (click again to undo)">up vote</a>
+                                            <span class="vote-count-post">1</span> <a class="vote-down-off" title="This answer is not useful (click again to undo)">
+                                                down vote</a>
+                                        </div>
+                                    </td>
+                                    <td class="answercell">
+                                        <div class="post-text">
+                                            <p>
+                                                Not exactly sure why, but changing the inner CSS to</p>
+                                            <pre><code>display:inline-block; </code></pre>
+                                            <p>
+                                                seems to work;</p>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/a/9519925/1202610" title="short permalink to this answer" id="link-post-9519925">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9519925/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info user-hover">
+                                                        <div class="user-action-time">
+                                                            answered <span title="2012-03-01 16:22:36Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/5744/harriyott">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/541820cf4d8844ddb0755ac69218c0cc?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/5744/harriyott">harriyott</a><br>
+                                                            <span class="reputation-score" title="reputation score" dir="ltr">5,020</span><span
+                                                                title="4 gold badges"><span class="badge1"></span><span class="badgecount">4</span></span><span
+                                                                    title="26 silver badges"><span class="badge2"></span><span class="badgecount">26</span></span><span
+                                                                        title="46 bronze badges"><span class="badge3"></span><span class="badgecount">46</span></span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="votecell">
+                                    </td>
+                                    <td>
+                                        <div id="comments-9519925" class="comments dno">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="was-this-helpful">
+                                            feedback
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a name="9520031"></a>
+                        <div id="answer-9520031" class="answer" data-answerid="9520031">
+                            <table>
+                                <tr>
+                                    <td class="votecell">
+                                        <div class="vote">
+                                            <input type="hidden" value="9520031">
+                                            <a class="vote-up-off" title="This answer is useful (click again to undo)">up vote</a>
+                                            <span class="vote-count-post">0</span> <a class="vote-down-off" title="This answer is not useful (click again to undo)">
+                                                down vote</a>
+                                        </div>
+                                    </td>
+                                    <td class="answercell">
+                                        <div class="post-text">
+                                            <p>
+                                                Doesn't answer the "why" (has to be something w/ collapsing margin), but seems like
+                                                the easiest/most logical way to do what you're trying to do would be to just <strong>
+                                                    add <code>padding-top</code> to the outer div</strong>:</p>
+                                            <p>
+                                                <a href="http://jsfiddle.net/hpU5d/1/" rel="nofollow">http://jsfiddle.net/hpU5d/1/</a></p>
+                                            <p>
+                                                Minor note - it shouldn't be necessary to set a div to <code>display:block;</code>
+                                                unless there's something else in your code telling it not to be block.</p>
+                                        </div>
+                                        <table class="fw">
+                                            <tr>
+                                                <td class="vt">
+                                                    <div class="post-menu">
+                                                        <a href="/a/9520031/1202610" title="short permalink to this answer" id="link-post-9520031">
+                                                            link</a><span class="lsep">|</span><a href="/posts/9520031/edit" title="revise and improve this post">edit</a></div>
+                                                </td>
+                                                <td align="right" class="post-signature">
+                                                    <div class="user-info user-hover">
+                                                        <div class="user-action-time">
+                                                            answered <span title="2012-03-01 16:28:40Z" class="relativetime">1 hour ago</span></div>
+                                                        <div class="user-gravatar32">
+                                                            <a href="/users/673664/dave">
+                                                                <div class="">
+                                                                    <img src="http://www.gravatar.com/avatar/780c5848d462adc2452f17c65def16c5?s=32&amp;d=identicon&amp;r=PG"
+                                                                        alt="" width="32" height="32"></div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="user-details">
+                                                            <a href="/users/673664/dave">Dave</a><br>
+                                                            <span class="reputation-score" title="reputation score" dir="ltr">2,953</span><span
+                                                                title="2 silver badges"><span class="badge2"></span><span class="badgecount">2</span></span><span
+                                                                    title="19 bronze badges"><span class="badge3"></span><span class="badgecount">19</span></span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="votecell">
+                                    </td>
+                                    <td>
+                                        <div id="comments-9520031" class="comments dno">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="was-this-helpful">
+                                            feedback
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a name='new-answer'></a>
+                        <form id="post-form" action="/questions/9519841/answer/submit" method="post" class="post-form">
+                        <h2 class="space">
+                            Your Answer</h2>
+                        <script type="text/javascript">
+                            StackExchange.ready(function () {
+
+                                initTagRenderer("".split(" "), "".split(" "));
+
+
+                                prepareEditor({
+                                    heartbeatType: 'answer',
+                                    bindNavPrevention: true,
+                                    postfix: "",
+                                    onDemand: false
+                , immediatelyShowMarkdownHelp: true
+                                });
+
+                            });  
+                        </script>
+                        <div id="post-editor" class="post-editor">
+                            <div class="wmd-container">
+                                <div id="wmd-button-bar" class="wmd-button-bar">
+                                </div>
+                                <textarea id="wmd-input" class="wmd-input" name="post-text" cols="92" rows="15" tabindex="101"></textarea>
+                            </div>
+                            <div class="fl" style="margin-top: 8px; height: 24px;">
+                                &nbsp;</div>
+                            <div id="draft-saved" class="draft-saved community-option fl" style="margin-top: 8px;
+                                height: 24px; display: none;">
+                                draft saved</div>
+                            <div id="wmd-preview" class="wmd-preview">
+                            </div>
+                            <div>
+                            </div>
+                            <div class="edit-block">
+                                <input id="fkey" name="fkey" type="hidden" value="ae51cd80ba3bbb7f4d497416eef196cb">
+                                <input id="author" name="author" type="text">
+                            </div>
+                        </div>
+                        <div class="form-submit cbt">
+                            <input id="submit-button" type="submit" value="Post Your Answer" tabindex="110"></div>
+                        </form>
+                        <h2 class="bottom-notice">
+                            Not the answer you're looking for? Browse other questions tagged <a href="/questions/tagged/html"
+                                class="post-tag" title="show questions tagged 'html'" rel="tag">html</a> <a href="/questions/tagged/css"
+                                    class="post-tag" title="show questions tagged 'css'" rel="tag">css</a> <a href="/questions/tagged/margin"
+                                        class="post-tag" title="show questions tagged 'margin'" rel="tag">margin</a>
+                            or <a href="/questions/ask">ask your own question</a>.
+                        </h2>
+                    </div>
+                </div>
+                <div id="sidebar">
+                    <style type="text/css">
+                        .hide-newsletter-loading
+                        {
+                            visibility: hidden;
+                        }
+                    </style>
+                    <div class="module newuser newuser-greeting hide-newsletter-loading" style="display: none">
+                        <h4>
+                            Hello World!</h4>
+                        <div>
+                            <p>
+                                <p>
+                                    This is a collaboratively edited question and answer site for <b>professional and enthusiast
+                                        programmers</b>. It's 100% free, no registration required.</p>
+                            </p>
+                            <p class="ar">
+                                <a href="/about?mnu=1">about &raquo;</a>&nbsp;&nbsp;&nbsp;<a href="/faq?mnu=1">faq &raquo;</a>
+                            </p>
+                        </div>
+                        <script type="text/javascript">
+                            StackExchange.ready(function () {
+                                var newUser = $('.newuser-greeting');
+                                if (!StackExchange.options.user.isAnonymous) {
+                                    newUser.removeClass('hide-newsletter-loading');
+                                    return;
+                                }
+
+                                var continuingSession = window.sessionStorage && window.sessionStorage['targettedNewsletter'];
+
+                                var matches = /:\/\/([^\/]*)/.exec(document.referrer);
+
+                                if (!continuingSession && (!matches || matches.length != 2)) {
+                                    newUser.removeClass('hide-newsletter-loading');
+                                } else {
+                                    var domain = continuingSession || matches[1];
+
+                                    if (continuingSession || $.inArray(domain, ['www.reddit.com', 'news.ycombinator.com']) > -1) {
+                                        $.ajax({
+                                            url: '/newsletter/targetted/ajax',
+                                            data: { domain: domain },
+                                            success: function (data, status, xhr) {
+                                                $('#newsletter-ad').remove();
+                                                newUser.empty().append($(data));
+                                            },
+                                            complete: function () {
+                                                newUser.attr('class', '').attr('style', '');
+                                            }
+                                        });
+
+                                        if (!continuingSession && window.sessionStorage) {
+                                            window.sessionStorage['targettedNewsletter'] = domain + '-continued';
+                                        }
+                                    } else {
+                                        newUser.removeClass('hide-newsletter-loading');
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div class="module">
+                        <p class="label-key">
+                            tagged</p>
+                        <div class="tagged">
+                            <a href="/questions/tagged/html" class="post-tag" title="show questions tagged 'html'"
+                                rel="tag">html</a>&nbsp;<span class="item-multiplier">&times;&nbsp;82226</span><br>
+                            <a href="/questions/tagged/css" class="post-tag" title="show questions tagged 'css'"
+                                rel="tag">css</a>&nbsp;<span class="item-multiplier">&times;&nbsp;63898</span><br>
+                            <a href="/questions/tagged/margin" class="post-tag" title="show questions tagged 'margin'"
+                                rel="tag">margin</a>&nbsp;<span class="item-multiplier">&times;&nbsp;541</span><br>
+                        </div>
+                        <table id="qinfo">
+                            <tr>
+                                <td>
+                                    <p class="label-key">
+                                        asked</p>
+                                </td>
+                                <td style="padding-left: 10px">
+                                    <p class="label-key" title="2012-03-01 16:17:34Z">
+                                        <b>today</b></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="label-key">
+                                        viewed</p>
+                                </td>
+                                <td style="padding-left: 10px">
+                                    <p class="label-key">
+                                        <b>51 times</b></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="label-key">
+                                        active</p>
+                                </td>
+                                <td style="padding-left: 10px">
+                                    <p class="label-key">
+                                        <b><a href="?lastactivity" class="lastactivity-link" title="2012-03-01 17:11:35Z">today</a></b></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <script type="text/javascript">
+                        var scriptSrc = "http://engine2.adzerk.net/z/8277/adzerk1_2_4_43,adzerk2_2_17_45,adzerk3_2_4_44?keywords=html,css,margin,x-user-registered";
+                        if (document.referrer) {
+                            if (/\?/.test(scriptSrc))
+                                scriptSrc += "&";
+                            else
+                                scriptSrc += "?";
+                            scriptSrc += "xReferrer=" + document.referrer;
+                        }
+                        StackExchange.ready(function () { var z = document.createElement("script"); z.type = "text/javascript"; z.async = "true"; z.src = scriptSrc; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(z, s); });
+                    </script>
+                    <div class="everyonelovesstackoverflow" id="adzerk2">
+                    </div>
+                    <div id="hireme">
+                        <script type="text/javascript">
+                            var careers_adurl = "http://careers.stackoverflow.com/ad/js", careers_cssurl = "http://cdn.sstatic.net/careers/ads/sidebar.min.css?35becd", careers_leaderboardcssurl = "http://cdn.sstatic.net/careers/ads/ninja.min.css?35becd", careers_companycssurl = "http://cdn.sstatic.net/careers/ads/company", careers_adselector = "div.hireme, div#hireme"; if ($(careers_adselector).length == 0) { var style = "min-height:220px;margin:12px 0", div = $("<div>").attr("id", "hireme").addClass("hireme").attr("style", style), dummy = $("<div>").html(div); document.write(dummy.html()) } StackExchange.ready(function () { $.ajax({ url: "http://cdn.sstatic.net/careers/ads/adloader.min.js?35becd", dataType: "script", cache: true }) });
+                        </script>
+                    </div>
+                    <div class="module">
+                        <h4 id="h-related">
+                            Related</h4>
+                        <div class="related">
+                            <div class="spacer">
+                                <a href="/questions/885855/css-margin-auto" class="question-hyperlink">CSS Margin Auto</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/1811906/css-how-to-make-margin-0px-auto-work" class="question-hyperlink">
+                                    CSS: how to make margin: 0px auto work</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/2176520/why-would-margin-not-be-contained-by-parent-element"
+                                    class="question-hyperlink">Why would margin not be contained by parent element?</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/2890354/margin-top-in-a-nested-div" class="question-hyperlink">margin-top
+                                    in a nested div</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/3159840/css-margin-top-to-a-block-affects-to-the-container-div"
+                                    class="question-hyperlink">CSS: margin-top to a block affects to the container div</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/3236060/margin-top-under-a-floated-div-css" class="question-hyperlink">
+                                    margin-top under a floated div css</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/3642036/margin-does-not-push-down-another-margin-css" class="question-hyperlink">
+                                    margin does not push down another margin, css</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/3849541/margin-using-adjacent-selector-in-css" class="question-hyperlink">
+                                    Margin using adjacent selector in css</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/3929712/why-does-margin-top-work-but-margin-bottom-doesnt" class="question-hyperlink">
+                                    Why does margin-top work, but margin-bottom doesn&#39;t?</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/4633199/html-css-margin-issue" class="question-hyperlink">HTML/CSS
+                                    Margin issue</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/5031143/css-margin-top-property-only-works-if-border-is-declared"
+                                    class="question-hyperlink">css margin-top property only works if border is declared</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/5210939/the-top-margin-of-my-first-div-is-adding-extra-margin-at-the-bottom-of-my-page"
+                                    class="question-hyperlink">The top margin of my first div, is adding extra margin
+                                    at the bottom of my page (bottom div has no bottom margin)</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/5387576/css-margin-0-is-not-setting-to-0" class="question-hyperlink">
+                                    CSS Margin: 0 is not setting to 0</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/5583089/why-does-not-work-margin-top-on-this-layout" class="question-hyperlink">
+                                    why does not work margin-top on this layout</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/5674133/common-problem-with-css-margin" class="question-hyperlink">
+                                    Common problem with CSS margin</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/6285885/css-font-top-margin" class="question-hyperlink">CSS: Font
+                                    top margin</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/6454666/css-margin-problem" class="question-hyperlink">CSS Margin
+                                    problem</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/6569569/css-margin-and-padding-newbie-question" class="question-hyperlink">
+                                    css margin and padding newbie question</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/6951425/why-is-the-inner-div-top-margin-bringing-its-wrapper-div-top-margin-along-with"
+                                    class="question-hyperlink">why is the inner div top margin bringing it&#39;s wrapper
+                                    div top margin along with it</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/7611030/css-display-inline-block-does-not-accept-margin-top"
+                                    class="question-hyperlink">CSS display: inline-block does not accept margin-top?</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/8576644/css-margin-not-responsed" class="question-hyperlink">css
+                                    margin not responsed</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/8675258/margin-collapse-after-relative-positioned-div" class="question-hyperlink">
+                                    Margin collapse after relative positioned div</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/8927541/negative-margin-top-in-combination-with-floats-doesnt-work-as-expected-only-in"
+                                    class="question-hyperlink">negative margin-top in combination with floats doesn&#39;t
+                                    work as expected (only in Firefox)</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/9165369/css-margin-auto-center-with-top-margin-valid" class="question-hyperlink">
+                                    CSS margin auto center with top margin - VALID?</a>
+                            </div>
+                            <div class="spacer">
+                                <a href="/questions/9224503/why-the-div-margin-top-is-not-working-as-expected" class="question-hyperlink">
+                                    why the div margin-top is not working as expected?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="feed-link">
+                    <div id="feed-link-text">
+                        <a href="/feeds/question/9519841" title="feed of this question and its answers"><span
+                            class="feed-icon"></span>question feed</a></div>
+                </div>
+                <script type="text/javascript">
+                    StackExchange.ready(function () { $.get('/posts/9519841/ivc/77be'); });
+                </script>
+                <noscript>
+                    <div>
+                        <img src="/posts/9519841/ivc/77be" class="dno" alt="" width="0" height="0"></div>
+                </noscript>
+                <div style="display: none" id="prettify-lang">
+                    default</div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <div class="footerwrap">
+            <div id="footer-menu">
+                <a href="/about">about</a> | <a href="/faq">faq</a> | <span onclick="if(window.localStorage){localStorage.setItem('blog-new',1330701080000); $('.new-blog-post').fadeOut();}">
+                    <script type="text/javascript">                        if (!window.localStorage || new Date(+localStorage.getItem('blog-new')) < new Date()) document.write('<span title="SE Podcast #31 &#8211; Goodbye Jeff, by Alex Miller - 2 hours ago" class="new-blog-post">new<\/span>');</script>
+                    <a href="http://blog.stackexchange.com?blt=1">blog</a> </span>| <a href="http://chat.stackoverflow.com">
+                        chat</a> | <a href="http://data.stackexchange.com">data</a> | <a href="http://blog.stackoverflow.com/category/podcasts/">
+                            podcast</a> | <a href="http://shop.stackexchange.com/">shop</a> | <a href="http://stackexchange.com/legal">
+                                legal</a> | <a href="http://engine.adzerk.net/redirect/0/2776/2751/0/4de3c60f719c4dfcb1a57531c7050090/0">
+                                    advertising info</a> | <a onclick="StackExchange.switchMobile('on', '/questions/9519841/why-does-css-margin-top-not-work')">
+                                        mobile</a> | <b><a href="mailto:team@stackoverflow.com">contact us</a></b>
+                | <b><a href="http://meta.stackoverflow.com">feedback</a></b>
+                <div id="footer-sites">
+                    <span style="color: #FE7A15; font-size: 140%">&#9632;</span>&nbsp;<a href="http://stackoverflow.com">stackoverflow.com</a>&nbsp;
+                    <span style="color: #FE7A15; font-size: 140%">&#9632;</span>&nbsp;<a href="http://stackapps.com">api/apps</a>&nbsp;
+                    <span style="color: #FE7A15; font-size: 140%">&#9632;</span>&nbsp;<a href="http://careers.stackoverflow.com">careers</a>&nbsp;
+                    <span style="color: #E8272C; font-size: 140%">&#9632;</span>&nbsp;<a href="http://serverfault.com">serverfault.com</a>&nbsp;
+                    <span style="color: #00AFEF; font-size: 140%">&#9632;</span>&nbsp;<a href="http://superuser.com">superuser.com</a>&nbsp;
+                    <span style="color: #969696; font-size: 140%">&#9632;</span>&nbsp;<a href="http://meta.stackoverflow.com">meta</a>&nbsp;
+                    <span style="color: #46937D; font-size: 140%">&#9632;</span>&nbsp;<a href="http://area51.stackexchange.com">area&nbsp;51</a>&nbsp;
+                    <span style="color: #C0D0DC; font-size: 140%">&#9632;</span>&nbsp;<a href="http://webapps.stackexchange.com">webapps</a>&nbsp;
+                    <span style="color: #000000; font-size: 140%">&#9632;</span>&nbsp;<a href="http://gaming.stackexchange.com">gaming</a>&nbsp;
+                    <span style="color: #dd4814; font-size: 140%">&#9632;</span>&nbsp;<a href="http://askubuntu.com">ubuntu</a>&nbsp;
+                    <span style="color: #9ce4fe; font-size: 140%">&#9632;</span>&nbsp;<a href="http://webmasters.stackexchange.com">webmasters</a>&nbsp;
+                    <span style="color: #cf4d3f; font-size: 140%">&#9632;</span>&nbsp;<a href="http://cooking.stackexchange.com">cooking</a>&nbsp;
+                    <span style="color: #f4f28d; font-size: 140%">&#9632;</span>&nbsp;<a href="http://gamedev.stackexchange.com">game
+                        development</a>&nbsp; <span style="color: #0f3559; font-size: 140%">&#9632;</span>&nbsp;<a
+                            href="http://math.stackexchange.com">math</a>&nbsp; <span style="color: #f2f2f2;
+                                font-size: 140%">&#9632;</span>&nbsp;<a href="http://photo.stackexchange.com">photography</a>&nbsp;
+                    <span style="color: #037187; font-size: 140%">&#9632;</span>&nbsp;<a href="http://stats.stackexchange.com">stats</a>&nbsp;
+                    <span style="color: #f1e7cc; font-size: 140%">&#9632;</span>&nbsp;<a href="http://tex.stackexchange.com">tex</a>&nbsp;
+                    <span style="color: #e1cdae; font-size: 140%">&#9632;</span>&nbsp;<a href="http://english.stackexchange.com">english</a>&nbsp;
+                    <span style="color: #a2d9f6; font-size: 140%">&#9632;</span>&nbsp;<a href="http://cstheory.stackexchange.com">theoretical
+                        cs</a>&nbsp; <span style="color: #1b3e6c; font-size: 140%">&#9632;</span>&nbsp;<a
+                            href="http://programmers.stackexchange.com">programmers</a>&nbsp; <span style="color: #293a5d;
+                                font-size: 140%">&#9632;</span>&nbsp;<a href="http://unix.stackexchange.com">unix</a>&nbsp;
+                    <span style="color: #bec0cb; font-size: 140%">&#9632;</span>&nbsp;<a href="http://apple.stackexchange.com">apple</a>&nbsp;
+                    <span style="color: #939185; font-size: 140%">&#9632;</span>&nbsp;<a href="http://wordpress.stackexchange.com">wordpress</a>&nbsp;
+                    <span style="color: #ebf5f5; font-size: 140%">&#9632;</span>&nbsp;<a href="http://physics.stackexchange.com">physics</a>&nbsp;
+                    <span style="color: #4176ab; font-size: 140%">&#9632;</span>&nbsp;<a href="http://diy.stackexchange.com">home&nbsp;improvement</a>&nbsp;
+                    <span style="color: #d1d8d7; font-size: 140%">&#9632;</span>&nbsp;<a href="http://gis.stackexchange.com">gis</a>&nbsp;
+                    <span style="color: #e5e2d3; font-size: 140%">&#9632;</span>&nbsp;<a href="http://electronics.stackexchange.com">electronics</a>&nbsp;
+                    <span style="color: #a4c639; font-size: 140%">&#9632;</span>&nbsp;<a href="http://android.stackexchange.com">android</a>&nbsp;
+                    <span style="color: #2e4e60; font-size: 140%">&#9632;</span>&nbsp;<a href="http://security.stackexchange.com">security</a>&nbsp;
+                    <span style="color: #45bcb5; font-size: 140%">&#9632;</span>&nbsp;<a href="http://bicycles.stackexchange.com">bicycles</a>&nbsp;
+                    <span style="color: #00adee; font-size: 140%">&#9632;</span>&nbsp;<a href="http://dba.stackexchange.com">dba</a>&nbsp;
+                    <span style="color: #2edaf0; font-size: 140%">&#9632;</span>&nbsp;<a href="http://drupal.stackexchange.com">drupal</a>&nbsp;
+                    <span style="color: #213951; font-size: 140%">&#9632;</span>&nbsp;<a href="http://sharepoint.stackexchange.com">sharepoint</a>&nbsp;
+                    <span style="color: #73abb3; font-size: 140%">&#9632;</span>&nbsp;<a href="http://scifi.stackexchange.com">scifi
+                        &amp; fantasy</a>&nbsp; <span style="color: #23629F; font-size: 140%">&#9632;</span>&nbsp;<a
+                            href="http://ux.stackexchange.com">user experience</a>&nbsp;
+                </div>
+            </div>
+            <div id="footer-flair">
+                <a class="peer1" href="http://www.peer1.com/stackoverflow"></a><a href="http://creativecommons.org/licenses/by-sa/3.0/"
+                    class="cc-wiki-link"></a>
+                <div id="svnrev">
+                    rev 2012.3.1.1360</div>
+            </div>
+            <div id="copyright">
+                site design / logo &copy; 2012 stack exchange inc; user contributions licensed under
+                <a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license">cc-wiki</a>
+                with <a href="http://blog.stackoverflow.com/2009/06/attribution-required/" rel="license">
+                    attribution required</a>
+            </div>
+        </div>
+    </div>
+    <noscript>
+        <div id="noscript-warning">
+            Stack Overflow works best with JavaScript enabled<img src="http://pixel.quantserve.com/pixel/p-c1rF4kxgLUzNc.gif"
+                alt="" class="dno"></div>
+    </noscript>
+    <script type="text/javascript">        var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-5620270-1']);
+        _gaq.push(['_setCustomVar', 1, 'tags', '|html|css|margin|']);
+        _gaq.push(['_setCustomVar', 2, 'accountid', '1239689', 2]);
+        _gaq.push(['_trackPageview']);
+        var _qevents = _qevents || [];
+        (function () {
+            var s = document.getElementsByTagName('script')[0];
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = 'http://www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(ga, s);
+            var sc = document.createElement('script');
+            sc.type = 'text/javascript';
+            sc.async = true;
+            sc.src = 'http://edge.quantserve.com/quant.js';
+            s.parentNode.insertBefore(sc, s);
+        })();
+    </script>
+    <script type="text/javascript">
+        _qevents.push({ qacct: "p-c1rF4kxgLUzNc" });
+    </script>
+</body>
+</html>

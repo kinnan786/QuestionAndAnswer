@@ -1,0 +1,303 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.Services;
+
+public partial class datCptCode : System.Web.UI.Page
+{
+    private clsBLDermSimpleLists objBL;
+    private clsDTOProCPTRelation DTOProcptRelation;
+    private clsDTOproCPTTypeList DTOproCPTTypeList;
+    private List<clsDTOproCPTTypeList> LstDTOproCPTTypeList;
+    private int proid;
+    private int proCptId;
+    private int EditMode;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        //System.Diagnostics.Debugger.Break();
+
+
+        objBL = new clsBLDermSimpleLists();
+
+        if (Request.QueryString["ProCPTId"] != null)
+            proCptId = Convert.ToInt32(Request.QueryString["ProCPTId"]);
+        if (Request.QueryString["Proid"] != null)
+            proid = Convert.ToInt32(Request.QueryString["Proid"].ToString());
+        if (Request.QueryString["ProId"] != null)
+            proid = Convert.ToInt32(Request.QueryString["ProId"].ToString());
+        if (Request.QueryString["EditMode"] != null)
+            EditMode = Convert.ToInt32(Request.QueryString["EditMode"].ToString());
+
+        if (!IsPostBack)
+        {
+            SetFieldValues();
+            SetChoiceName(proCptId);
+            SetMethodName(proCptId);
+            SetSiteName(proCptId);
+            hdnproCPTId.Value = proCptId.ToString();
+            ddlconsent.DataSource = objBL.GetConsent((Convert.ToInt32(HttpContext.Current.Session[Constants.PracticeId])));
+            ddlconsent.DataBind();
+        }
+
+        if (EditMode == 1)
+        {
+            divinactive.Style["Display"] = "inline";
+            btnDelete.Visible = true;
+            btnDelete.Attributes.Add("onclick", "DeleteproCPTLists(" + proCptId + ")");
+            BaseIntelliSenseControlCode.Enabled = false;
+        }
+        else
+        {
+            divinactive.Style["Display"] = "none";
+            btnDelete.Visible = false;
+            BaseIntelliSenseControlCode.Enabled = true;
+        }
+    }
+
+    protected void SetFieldValues()
+    {
+        DTOProcptRelation = new clsDTOProCPTRelation();
+        objBL = new clsBLDermSimpleLists();
+        DTOProcptRelation = objBL.GetProCPTListById(proCptId);
+        BaseIntelliSenseControlCode.Val = DTOProcptRelation.CPT.ToString();
+        BaseIntelliSenseControlAssoCode.Val = DTOProcptRelation.AssociatedCPT.ToString();
+
+        if (DTOProcptRelation.MinSize > 0)
+            TxtSizeMin.Text = DTOProcptRelation.MinSize.ToString();
+
+        if (DTOProcptRelation.MaxSize > 0)
+            TxtSizeMax.Text = DTOProcptRelation.MaxSize.ToString();
+
+        if (DTOProcptRelation.MinQty > 0)
+            TxtQuantityMin.Text = DTOProcptRelation.MinQty.ToString();
+
+        if (DTOProcptRelation.MaxQty > 0)
+            TxtQuantityMax.Text = DTOProcptRelation.MaxQty.ToString();
+
+        radPerUnit.Checked = (DTOProcptRelation.ChargePerUnit == 1) ? true : false;
+        radFlat.Checked = (DTOProcptRelation.ChargePerUnit == 0) ? true : false;
+        TxtDescription.Text = DTOProcptRelation.CPTDesc.ToString();
+        chkInactive.Checked = (Convert.ToBoolean(DTOProcptRelation.MarkDeleted)) ? true : false;
+
+        chkPrintByRows.Checked = (DTOProcptRelation.PrintByRows == 1) ? true : false;
+
+        string vsizeunit = objBL.GetProlistSizeunit(proid, (Convert.ToInt32(HttpContext.Current.Session[Constants.PracticeId])));
+
+        if (vsizeunit == "")
+            ddlsizeunit.SelectedValue = "cm";
+        else
+            ddlsizeunit.SelectedValue = vsizeunit;
+
+        ddlsizeunit.Enabled = false;
+
+        if (DTOProcptRelation.ConcentId > 0)
+            ddlconsent.SelectedValue = DTOProcptRelation.ConcentId.ToString();
+    }
+
+    protected void SetChoiceName(int proCptId)
+    {
+        foreach (clsDTOproCPTTypeList DTOProcptRelation1 in objBL.GetproCPTChoiceList(proCptId))
+        {
+            dsBodyChart.dtProChoiceListRow dr = GetChoiceNameFromCache(DTOProcptRelation1.ChoiceId);
+            hdnchoices.Value += dr.choiceId + "," + dr.choice + "|";
+        }
+    }
+
+    private dsBodyChart.dtProChoiceListRow GetChoiceNameFromCache(int proChoiceID)
+    {
+        dsBodyChart.dtProChoiceListDataTable DataTable = null;
+        DataTable = objBL.getProChoiceList();
+        return (dsBodyChart.dtProChoiceListRow)DataTable.Select("choiceID=" + proChoiceID)[0];
+    }
+
+    protected void SetMethodName(int proCptId)
+    {
+        foreach (clsDTOproCPTTypeList DTOProcptRelation1 in objBL.GetproCPTMethodList(proCptId))
+        {
+            dsBodyChart.dtProMethodListRow dr = GetMethodNameFromCache(DTOProcptRelation1.MethodId);
+            hdnmethods.Value += dr.methodId + "," + dr.method + "," + proCptId + "|";
+        }
+    }
+
+    private dsBodyChart.dtProMethodListRow GetMethodNameFromCache(int proMethodid)
+    {
+        dsBodyChart.dtProMethodListDataTable DataTable = null;
+        DataTable = objBL.getProMethodList();
+        return (dsBodyChart.dtProMethodListRow)DataTable.Select("methodID=" + proMethodid)[0];
+    }
+
+    protected void SetSiteName(int proCptId)
+    {
+        foreach (clsDTOproCPTTypeList DTOProcptRelation1 in objBL.GetproCPTSiteList(proCptId))
+        {
+            dsBodyChart.dtBillingSitesRow dr = GetSiteNameFromCache(DTOProcptRelation1.BillingSiteId);
+            hdnsites.Value += dr.billingSiteId + "," + dr.billingSite + "," + proCptId + "|";
+        }
+    }
+
+    private dsBodyChart.dtBillingSitesRow GetSiteNameFromCache(int billingSiteID)
+    {
+        dsBodyChart.dtBillingSitesDataTable DataTable = null;
+        DataTable = objBL.getBillingSites();
+        return (dsBodyChart.dtBillingSitesRow)DataTable.Select("billingSiteId=" + billingSiteID)[0];
+    }
+
+    protected clsDTOProCPTRelation SetDTOProcptRelation()
+    {
+        DTOProcptRelation = new clsDTOProCPTRelation();
+
+        DTOProcptRelation.CPT = BaseIntelliSenseControlCode.Val.ToString();
+        DTOProcptRelation.ProId = proid;
+
+        if (proCptId != 0)
+            DTOProcptRelation.ProCPTId = proCptId;
+
+        DTOProcptRelation.AssociatedCPT = BaseIntelliSenseControlAssoCode.Val.ToString();
+        if (ddlconsent.SelectedIndex != 0)
+            DTOProcptRelation.ConcentId = Convert.ToInt32(ddlconsent.SelectedValue);
+
+        if (TxtSizeMin.Text != "")
+            DTOProcptRelation.MinSize = Convert.ToDecimal(TxtSizeMin.Text);
+
+        if (TxtSizeMax.Text != "")
+            DTOProcptRelation.MaxSize = Convert.ToDecimal(TxtSizeMax.Text);
+
+        if (TxtQuantityMax.Text != "")
+            DTOProcptRelation.MaxQty = Convert.ToInt32(TxtQuantityMax.Text);
+
+        if (TxtQuantityMin.Text != "")
+            DTOProcptRelation.MinQty = Convert.ToInt32(TxtQuantityMin.Text);
+
+        DTOProcptRelation.SizeUnit = ddlsizeunit.SelectedValue.ToString();
+        DTOProcptRelation.ChargePerUnit = (radFlat.Checked) ? 0 : 1;
+        DTOProcptRelation.CPTDesc = TxtDescription.Text.ToString();
+        DTOProcptRelation.PrintByRows = (chkPrintByRows.Checked) ? 1 : 0;
+        DTOProcptRelation.MarkDeleted = (chkInactive.Checked) ? 1 : 0;
+
+        return DTOProcptRelation;
+    }
+
+    protected List<clsDTOproCPTTypeList> SetDTOproCPTChoiceList()
+    {
+        LstDTOproCPTTypeList = new List<clsDTOproCPTTypeList>();
+
+        if (hdnchoices.Value != "")
+        {
+            foreach (string choices in hdnchoices.Value.Split('|'))
+            {
+                if (choices != "")
+                {
+                    string[] choice;
+                    choice = choices.Split(',');
+
+                    DTOproCPTTypeList = new clsDTOproCPTTypeList();
+                    DTOproCPTTypeList.ChoiceId = Int32.Parse(choice[0].ToString());
+                    DTOproCPTTypeList.ProCPTId = proCptId;
+                    LstDTOproCPTTypeList.Add(DTOproCPTTypeList);
+                }
+            }
+        }
+        return LstDTOproCPTTypeList;
+    }
+
+    protected List<clsDTOproCPTTypeList> SetDTOproCPTMethodList()
+    {
+        LstDTOproCPTTypeList = new List<clsDTOproCPTTypeList>();
+
+        if (hdnmethods.Value != "")
+        {
+            foreach (string methods in hdnmethods.Value.Split('|'))
+            {
+                if (methods != "")
+                {
+                    string[] method;
+                    method = methods.Split(',');
+
+                    DTOproCPTTypeList = new clsDTOproCPTTypeList();
+                    DTOproCPTTypeList.MethodId = Int32.Parse(method[0].ToString());
+                    DTOproCPTTypeList.ProCPTId = proCptId;
+                    LstDTOproCPTTypeList.Add(DTOproCPTTypeList);
+                }
+            }
+        }
+        return LstDTOproCPTTypeList;
+    }
+
+    protected List<clsDTOproCPTTypeList> SetDTOproCPTSiteList()
+    {
+        LstDTOproCPTTypeList = new List<clsDTOproCPTTypeList>();
+
+        if (hdnsites.Value != "")
+        {
+            foreach (string sites in hdnsites.Value.Split('|'))
+            {
+                if (sites != "")
+                {
+
+                    string[] site;
+                    site = sites.Split(',');
+
+                    DTOproCPTTypeList = new clsDTOproCPTTypeList();
+                    DTOproCPTTypeList.BillingSiteId = Int32.Parse(site[0].ToString());
+                    DTOproCPTTypeList.ProCPTId = proCptId;
+                    LstDTOproCPTTypeList.Add(DTOproCPTTypeList);
+
+                }
+            }
+        }
+        return LstDTOproCPTTypeList;
+    }
+
+    protected void btnSave_Click(object sender, ImageClickEventArgs e)
+    {
+        List<clsDTOproCPTTypeList>[] ArrayclsDToproCPTTypeList = new List<clsDTOproCPTTypeList>[3];
+        ArrayclsDToproCPTTypeList[0] = SetDTOproCPTChoiceList(); //choices
+        ArrayclsDToproCPTTypeList[1] = SetDTOproCPTMethodList(); //methods
+        ArrayclsDToproCPTTypeList[2] = SetDTOproCPTSiteList(); //Site
+
+        objBL = new clsBLDermSimpleLists();
+        int result;
+
+        if (EditMode == 1)
+        {
+            result = objBL.UpdateproCPTList(SetDTOProcptRelation(), ArrayclsDToproCPTTypeList);
+            if (result == -1)
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "AssoCptCode Not Exist", "AssoCptCodeNotExist()", true);
+                return;
+            }
+        }
+        else
+        {
+            result = objBL.AddproCPTList(SetDTOProcptRelation(), ArrayclsDToproCPTTypeList);
+
+            if (result == -1)
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "CptCode Not Exist", "CptCodeNotExist()", true);
+                return;
+            }
+            else if (result == -2)
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "AssoCptCode Not Exist", "AssoCptCodeNotExist()", true);
+                return;
+            }
+            else if (result == -3)
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "CPTcode alreadyexists", "CPTCodeAlreadyExists()", true);
+                return;
+            }
+        }
+        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Show lstCptCode", "window.parent.ShowlstCptCode()", true);
+    }
+
+    [WebMethod(EnableSession = true)]
+    public static string DeleteproCPTList(string ID)
+    {
+        clsBLDermSimpleLists objBL = new clsBLDermSimpleLists();
+        return objBL.DeleteproCPTList(Convert.ToInt32(ID)).ToString();
+    }
+}
